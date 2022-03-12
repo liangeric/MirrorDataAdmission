@@ -47,21 +47,50 @@ class ParetoNode(Node):
 # Classes of different types of Nodes
 class GaussianNode(Node):
 
-    def __init__(self, name, sample_n=2000, miu=0, var=1):
+    def __init__(self, name, sample_n=2000, miu=0, var=1, lower = None, upper = None):
         """
         :param name: str, the name of the column that is instantiated from this node
         :param sample_n: int, size of the instantiated samples
         :param miu: float, the mean value of the node's distribution
         :param var: float, the variance value of the node's distribution
+        :param lower: float, the lower bound of the distribution inclusive
+        :param upper: float, the upper bound of the distribution inclusive
         """
         Node.__init__(self, name, "NUM", sample_n)
         self.distribution = "Gaussian"
-        self.parameters = {"miu": miu, "var": var}
+        self.parameters = {"miu": miu, "var": var, "lower": lower, "upper": upper}
 
     def instantiate_values(self):
-        return np.random.normal(self.parameters["miu"], np.sqrt(self.parameters["var"]), self.sample_n)
+        values = np.random.normal(self.parameters["miu"], np.sqrt(self.parameters["var"]), self.sample_n)
+        if self.paramters["lower"] != None:
+            values[values < self.parameters["lower"]] = self.parameters["lower"]
+        if self.parameters["upper"] != None:
+            values[values > self.parameters["upper"]] = self.parameters["upper"]
+        return values
 
+# A discrete distribution that approximates a gaussian distribution
+class GaussianIntNode(Node):
 
+    def __init__(self, name, sample_n=2000, miu=0, var=1, lower = None, upper = None):
+        """
+        :param name: str, the name of the column that is instantiated from this node
+        :param sample_n: int, size of the instantiated samples
+        :param miu: float, the mean value of the node's distribution
+        :param var: float, the variance value of the node's distribution
+        :param lower: float, the lower bound of the distribution inclusive
+        :param upper: float, the upper bound of the distribution inclusive
+        """
+        Node.__init__(self, name, "NUM", sample_n)
+        self.distribution = "Gaussian"
+        self.parameters = {"miu": miu, "var": var, "lower": lower, "upper": upper}
+
+    def instantiate_values(self):
+        values = np.random.normal(self.parameters["miu"], np.sqrt(self.parameters["var"]), self.sample_n).round()
+        if self.paramters["lower"] != None:
+            values[values < self.parameters["lower"]] = self.parameters["lower"]
+        if self.parameters["upper"] != None:
+            values[values > self.parameters["upper"]] = self.parameters["upper"]
+        return values
 
 class UniformNode(Node):
     def __init__(self, name, sample_n=2000, min=0, max=1):
