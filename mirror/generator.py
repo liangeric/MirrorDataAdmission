@@ -54,8 +54,10 @@ class Mirror():
                                 # print("**", incoming_edge_i.bounds, bisect(incoming_edge_i.bounds, 23))
                                 df["C_"+incoming_edge_i.parent_name] = df[incoming_edge_i.parent_name].apply(lambda x: str(bisect(incoming_edge_i.bounds,x)))
                                 df["group"] += df["C_"+incoming_edge_i.parent_name]
+                                df["group"] += ","
                             else:
                                 df["group"] += df[incoming_edge_i.parent_name]
+                                df["group"] += ","
                         # compute the new probability table for the child node considering all possible subgroups
                         all_cpt = {}
                         for gi in df["group"].unique():
@@ -64,7 +66,7 @@ class Mirror():
                                 prob_i = 0
                                 for incoming_edge_i, weight_i in zip(edges[node_i.name][0], edges[node_i.name][1]):
                                     gi_idx = edges[node_i.name][0].index(incoming_edge_i)
-                                    prob_i += weight_i * incoming_edge_i.probability_table["".join(gi)[gi_idx]][node_value_i]
+                                    prob_i += weight_i * incoming_edge_i.probability_table[str.split(gi,",")[gi_idx]][node_value_i]
                                 # for gi_idx, parent_i in enumerate(edges[node_i.name][0]):
                                 #     prob_i *= parent_i.probability_table["".join(gi)[gi_idx]][node_value_i]
                                 gi_probability[node_value_i] = prob_i
@@ -84,7 +86,7 @@ class Mirror():
             else: # no parents
                 # instantiate using its parameters
                 df[node_i.name] = node_i.instantiate_values()
-                print(node_i.name, "independet", list(df.columns))
+                print(node_i.name, "independent", list(df.columns))
             print("----"*10+"\n")
         self.df = df
         # return self.df
@@ -106,22 +108,33 @@ class Mirror():
 if __name__ == '__main__':
     # initialize nodes
     total_n = 100
-    node_g = CategoricalNode("G", {"M": 0.5, "F": 0.5}, sample_n=total_n)
+    node_diversity = CategoricalNode("diversity", 
+                                    {"White": 0.4, "B": 0.1, "A":0.2, "H":0.1,
+                                    "I":0.05, "O":0.15}, 
+                                    sample_n=total_n)
 
-    node_u = ParetoNode("U", sample_n=total_n, shape=2.0, scale=1.0) # an unobserved pareto node
-    node_x = ParetoNode("X")
-    node_y = ParetoNode("Y")
+    node_toefl = GaussianNode("TOEFL", miu=90, var=10**2, sample_n=total_n)
 
-    edge_g_x = CtoN("G", "X", {"M": ["Pareto", 3.0, 1.0], "F": ["Pareto", 1.0, 1.0]})
-    edge_g_y = CtoN("G", "Y", {"M": ["Pareto", 3.0, 1.0], "F": ["Pareto", 2.0, 1.0]})
+    node_admission = CategoricalNode("admission", {"Y": 0.5, "N": 0.5}, sample_n=total_n)
 
-    edge_u_x = NtoNLinear("U", "X")
-    edge_x_y = NtoNLinear("X", "Y")
+    edge_diversity_toefl = CtoN("diversity", "TOEFL", {"White": ["Gaussian", 80, 20**2], 
+                                                    "B": ["Gaussian", 90, 5**2],
+                                                    "A": ["Gaussian", 70, 5**2],
+                                                    "H": ["Gaussian", 100, 10**2],
+                                                    "I": ["Gaussian", 80, 10**2],
+                                                    "O": ["Gaussian", 60, 10**2]})
+    edge_diversity_admission = CtoC("diversity", "admission", {"White": {"Y": 0.3, "N": 0.7}, 
+                                                            "B": {"Y": 0.7, "N": 0.3},
+                                                            "A": {"Y": 0.2, "N": 0.8}, 
+                                                            "H": {"Y": 0.5, "N": 0.5},
+                                                            "I": {"Y": 0.4, "N": 0.6},
+                                                            "O": {"Y": 0.9, "N": 0.1}})
+    edge_toefl_admission = NtoC("TOEFL", "admission", [100], [{"Y": 0.6, "N": 0.4}, {"Y": 0.4, "N": 0.6}])
 
-    # define DAG
-    nodes = [node_g, node_u, node_x, node_y]
-    edge_relations = {"X": ([edge_g_x, edge_u_x], [0.5, 0.5]),
-                      "Y": ([edge_g_y, edge_x_y], [0.4, 0.6])}
+
+    nodes = [node_diversity,node_toefl,node_admission]
+    edge_relations = {"TOEFL": edge_diversity_toefl,
+                    "admission":([edge_diversity_admission,edge_toefl_admission],[0.5,0.5])}
 
     mirror = Mirror(seed=0)
     mirror.generate_csv(nodes, edge_relations)

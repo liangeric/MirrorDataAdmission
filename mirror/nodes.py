@@ -62,7 +62,7 @@ class GaussianNode(Node):
 
     def instantiate_values(self):
         values = np.random.normal(self.parameters["miu"], np.sqrt(self.parameters["var"]), self.sample_n)
-        if self.paramters["lower"] != None:
+        if self.parameters["lower"] != None:
             values[values < self.parameters["lower"]] = self.parameters["lower"]
         if self.parameters["upper"] != None:
             values[values > self.parameters["upper"]] = self.parameters["upper"]
@@ -86,7 +86,7 @@ class GaussianIntNode(Node):
 
     def instantiate_values(self):
         values = np.random.normal(self.parameters["miu"], np.sqrt(self.parameters["var"]), self.sample_n).round()
-        if self.paramters["lower"] != None:
+        if self.parameters["lower"] != None:
             values[values < self.parameters["lower"]] = self.parameters["lower"]
         if self.parameters["upper"] != None:
             values[values > self.parameters["upper"]] = self.parameters["upper"]

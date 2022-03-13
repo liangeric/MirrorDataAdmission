@@ -130,7 +130,7 @@ class CtoN(Edge):
             raise ValueError
 
 if __name__ == '__main__':
-    node_g = CategoricalNode("G", {"M": 0.5, "F": 0.5}, sample_n=100)
+    node_g = CategoricalNode("G", {"Male": 0.5, "Female": 0.5}, sample_n=100)
 
     # node_g_m = GaussianNode("M_X", miu=0, var=1)
     # node_g_f = GaussianNode("F_X", miu=0, var=1)
@@ -141,13 +141,13 @@ if __name__ == '__main__':
     # df["tmp"] = [1 for _ in range(df.shape[0])]
     # df["A"] = np.random.randint(1, 80, size=1000)
 
-    edge_g_x = CtoN("G", "X", {"M": ["Gaussian", 3.0, 1.0], "F": ["Gaussian", 2.0, 1.0]})
+    edge_g_x = CtoN("G", "X", {"Male": ["Gaussian", 3.0, 1.0], "Female": ["Gaussian", 2.0, 1.0]})
     df["X"] = edge_g_x.instantiate_values(df)
 
     print(df.groupby(by=['G'])['X'].mean())
     print(df.groupby(by=['G'])['X'].var())
 
-    print(len(df), np.mean(df["X"]), np.var(df["X"]))
+    #print(len(df), np.mean(df["X"]), np.var(df["X"]))
 
 
     # print(df[df["G"]=="M"].shape[0], df[df["G"]=="F"].shape[0])
