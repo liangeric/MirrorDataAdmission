@@ -1,8 +1,13 @@
 import pandas as pd
 import numpy as np
 from bisect import bisect
+# comment out for local testing
 from mirror.nodes import CategoricalNode
 from mirror.nodes import GaussianNode, ParetoNode
+# comment out for global testing
+#from nodes import CategoricalNode
+#from nodes import GaussianNode, ParetoNode
+
 
 
 # Abstract base class for all nodes

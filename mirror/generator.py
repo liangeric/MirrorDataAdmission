@@ -1,6 +1,10 @@
 import os, pathlib
+# comment out for local testing
 from mirror.nodes import *
 from mirror.edges import *
+# comment out for global testing
+#from nodes import *
+#from edges import *
 from bisect import bisect
 
 class Mirror():
