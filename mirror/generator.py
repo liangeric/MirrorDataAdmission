@@ -113,7 +113,7 @@ if __name__ == '__main__':
     # initialize nodes
     total_n = 100
     node_diversity = CategoricalNode("diversity", 
-                                    {"White": 0.4, "B": 0.1, "A":0.2, "H":0.1,
+                                    {"White": 0.1, "B": 0.4, "A":0.2, "H":0.1,
                                     "I":0.05, "O":0.15}, 
                                     sample_n=total_n)
 
@@ -121,12 +121,6 @@ if __name__ == '__main__':
 
     node_admission = CategoricalNode("admission", {"Y": 0.5, "N": 0.5}, sample_n=total_n)
 
-    edge_diversity_toefl = CtoN("diversity", "TOEFL", {"White": ["Gaussian", 80, 20**2], 
-                                                    "B": ["Gaussian", 90, 5**2],
-                                                    "A": ["Gaussian", 70, 5**2],
-                                                    "H": ["Gaussian", 100, 10**2],
-                                                    "I": ["Gaussian", 80, 10**2],
-                                                    "O": ["Gaussian", 60, 10**2]})
     edge_diversity_admission = CtoC("diversity", "admission", {"White": {"Y": 0.3, "N": 0.7}, 
                                                             "B": {"Y": 0.7, "N": 0.3},
                                                             "A": {"Y": 0.2, "N": 0.8}, 
@@ -137,12 +131,11 @@ if __name__ == '__main__':
 
 
     nodes = [node_diversity,node_toefl,node_admission]
-    edge_relations = {"TOEFL": edge_diversity_toefl,
-                    "admission":([edge_diversity_admission,edge_toefl_admission],[0.5,0.5])}
+    edge_relations = {"admission":([edge_diversity_admission,edge_toefl_admission],[0.5,0.5])}
 
     mirror = Mirror(seed=0)
     mirror.generate_csv(nodes, edge_relations)
-    mirror.save_to_disc("../out/synthetic_data/test/R_pareto.csv")
+    mirror.save_to_disc("../out/synthetic_data/test/sample2.csv")
 
 
 
