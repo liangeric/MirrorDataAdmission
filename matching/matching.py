@@ -16,6 +16,7 @@ def calculate_score(dataSource, categories, noncategories):
 
     return dataSource
 
+# Finds matches of the first dataset in the second dataset (according to order in argument)
 def find_match(scores1,scores2):
     matches = []
     for i in range(scores1.shape[0]):
@@ -48,4 +49,7 @@ if __name__ == '__main__':
     
     # Match the datasets
     matches = find_match(scores1,scores2)
-    print(matches)
+
+    # Generate matched dataset
+    matchedData = data2.iloc[matches]
+    matchedData.to_csv("matching/matched.csv")
