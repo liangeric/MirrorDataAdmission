@@ -68,10 +68,10 @@ class GaussianNode(Node):
             values[values > self.parameters["upper"]] = self.parameters["upper"]
         return values
 
-# A discrete distribution that approximates a gaussian distribution
-class GaussianIntNode(Node):
+# A distribution that approximates a gaussian distribution and allows for rounding
+class GaussianRoundNode(Node):
 
-    def __init__(self, name, sample_n=2000, miu=0, var=1, lower = None, upper = None):
+    def __init__(self, name, sample_n=2000, miu=0, var=1, lower = None, upper = None, rounding = None):
         """
         :param name: str, the name of the column that is instantiated from this node
         :param sample_n: int, size of the instantiated samples
@@ -79,13 +79,18 @@ class GaussianIntNode(Node):
         :param var: float, the variance value of the node's distribution
         :param lower: float, the lower bound of the distribution inclusive
         :param upper: float, the upper bound of the distribution inclusive
+        :param rounding: int, the number of decimal places to round to
+                         Note: If this argument is NONE it is the same as GaussianNode
         """
         Node.__init__(self, name, "NUM", sample_n)
         self.distribution = "Gaussian"
-        self.parameters = {"miu": miu, "var": var, "lower": lower, "upper": upper}
+        self.parameters = {"miu": miu, "var": var, "lower": lower, "upper": upper, "rounding": rounding}
 
     def instantiate_values(self):
-        values = np.random.normal(self.parameters["miu"], np.sqrt(self.parameters["var"]), self.sample_n).round()
+        if self.parameters["rounding"] != None:
+            values = np.random.normal(self.parameters["miu"], np.sqrt(self.parameters["var"]), self.sample_n).round(self.parameters["rounding"])
+        else:
+            values = np.random.normal(self.parameters["miu"], np.sqrt(self.parameters["var"]), self.sample_n)
         if self.parameters["lower"] != None:
             values[values < self.parameters["lower"]] = self.parameters["lower"]
         if self.parameters["upper"] != None:
