@@ -2,31 +2,24 @@
 import numpy as np
 import pandas as pd
 
-def calculate_score(dataSource, noncategories):
-    # given mean, normalize all rows of non-categorical data
-    for (col,mu,sigma) in noncategories:
-        dataSource[col] = (dataSource[col] - mu)/sigma
-    return dataSource
+def roundNonCat(dataSource, noncategories):
+    newData = dataSource.copy()
+    # given column name and number of decimal places to round to
+    for (col,decimalsRound) in noncategories:
+        newData[col] = np.round(newData[col], decimalsRound)
+    return newData
 
 # Finds matches of the first dataset in the second dataset (according to order in argument)
-def find_match(scores1,scores2, noncategories, categories):
+def find_match(dataOne,dataTwo):
     matches = []
-    for i in range(scores1.shape[0]):
-        smallestDist = np.inf
-        indexMatch = 0
-        scores1nonCat = scores1[noncategories]
-        scores2nonCat = scores2[noncategories]
-        scores1Cat = scores1[categories]
-        scores2Cat = scores2[categories]
-        for j in range(scores2.shape[0]):
-            # Find Euclidean distance between rows for non-categorical (L2 norm on difference)
-            currentDistance = np.linalg.norm(scores1nonCat.iloc[i] - scores2nonCat.iloc[j])
-            # Indicator for each categorical to check if it's the same
-            currentDistance += len(categories) - np.sum(scores1Cat.iloc[i] == scores2Cat.iloc[j])
-            if currentDistance < smallestDist:
-                smallestDist = currentDistance
-                indexMatch = j
-        matches += [indexMatch]
+    for i in range(dataOne.shape[0]):
+        # Look for an exact match in second Dataset
+        for j in range(dataTwo.shape[0]):
+            if (np.sum(dataOne.iloc[i] == dataTwo.iloc[j]) == dataOne.shape[1]):
+                matches +=[j]
+                break
+            if (j == (dataTwo.shape[0]-1)):
+                matches +=[dataTwo.shape[0]]
     return matches
     
 
@@ -37,19 +30,21 @@ if __name__ == '__main__':
 
     # List of row names that are categorical
     categories = ["diversity", "admission"]
-    # List of row names that are non-categorical in the format of (name,mean,std) for both datasets
-    noncategoriesOne = [("TOEFL",90,10)]
-    noncategoriesTwo = [("TOEFL",90,10)]
-    noncategories = []
-    for (col,mu,sigma) in noncategories:
-        noncategories += [col]
+    # List of row names that are non-categorical in the format of (name,decimalsRound)
+    # Note: decimalsRound is how many decimal places to keep
+    noncategories= [("TOEFL",1)]
 
-    # Get scores for datasets
-    scores1 = calculate_score(data1, noncategoriesOne)
-    scores2 = calculate_score(data2, noncategoriesTwo)
+    # round the noncategorical columns
+    data1Round = roundNonCat(data1,noncategories)
+    data2Round = roundNonCat(data2,noncategories)
     
     # Match the datasets
-    matches = find_match(scores1,scores2, noncategories, categories)
+    matches = find_match(data1Round,data2Round)
+
+    # add a row of NA's for matches not found
+    extraRow = data2.iloc[-1]
+    data2 = data2.append(extraRow)
+    data2.iloc[-1] = np.nan
 
     # Generate matched dataset
     matchedData = data2.iloc[matches]
