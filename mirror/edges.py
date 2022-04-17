@@ -34,7 +34,10 @@ class NtoN(Edge):
         :param bounds: sorted list of numbers, the values specify the boundary of each range.
                 E.g. [20, 45, 65] defines 4 ranges: [-, 20), [20, 45), [45, 65), [65, -)
         :param category_distribution: list of list, the order of the list maps to the orders in the bounds.
-                E.g. [["Gaussian", 0, 1], ["Gaussian", -1, 1]]
+                                      Note that first argument is distribution, second is mean, third is variance
+                                      with the fourth and fifth being bounds, and the sixth how much rounding
+                                      should be done
+                E.g. [["Gaussian", 0, 1, 0.5,1.5, None], ["Gaussian", -1, 1, None, None, 2]]
         """
 
         Edge.__init__(self, parent_name, child_name)
@@ -45,13 +48,24 @@ class NtoN(Edge):
 
     def sample_x(self, x):
         if self.category_distribution[x][0] == "Gaussian": # NUM
-            return np.random.normal(self.category_distribution[x][1], np.sqrt(self.category_distribution[x][2]))
+            finalReturn = np.random.normal(self.category_distribution[x][1], np.sqrt(self.category_distribution[x][2]))
         elif self.category_distribution[x][0] == "Uniform": # NUM
-            return np.random.uniform(self.category_distribution[x][1], self.category_distribution[x][2])
+            finalReturn = np.random.uniform(self.category_distribution[x][1], self.category_distribution[x][2])
         elif self.category_distribution[x][0] == "Pareto": # NUM
-            return (np.random.pareto(self.category_distribution[x][1]) + 1) * self.category_distribution[x][2]
+            finalReturn = (np.random.pareto(self.category_distribution[x][1]) + 1) * self.category_distribution[x][2]
         else: # ORD
-            return np.random.randint(self.category_distribution[x][1], self.category_distribution[x][2])
+            finalReturn = np.random.randint(self.category_distribution[x][1], self.category_distribution[x][2])
+        
+        if self.category_distribution[x][5] != None:
+            finalReturn = np.round(finalReturn,self.category_distribution[x][5])
+        
+        if self.category_distribution[x][3] != None:
+            if finalReturn < self.category_distribution[x][3]:
+                finalReturn = self.category_distribution[x][3]
+        if self.category_distribution[x][4] != None:
+            if finalReturn > self.category_distribution[x][4]:
+                finalReturn = self.category_distribution[x][4]
+        return finalReturn
 
     def instantiate_values(self, input_df):
         if input_df.shape[0] > 0:
