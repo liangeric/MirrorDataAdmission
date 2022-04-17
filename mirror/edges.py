@@ -26,15 +26,37 @@ class Edge():
     def get_type(self):
         return "Edge"
 
-class NtoNLinear(Edge):
-    def __init__(self, parent_name, child_name):
+class NtoN(Edge):
+    def __init__(self, parent_name, child_name, bounds, category_distribution):
+        """
+        :param parent_name:
+        :param child_name:
+        :param bounds: sorted list of numbers, the values specify the boundary of each range.
+                E.g. [20, 45, 65] defines 4 ranges: [-, 20), [20, 45), [45, 65), [65, -)
+        :param category_distribution: list of list, the order of the list maps to the orders in the bounds.
+                E.g. [["Gaussian", 0, 1], ["Gaussian", -1, 1]]
+        """
+
         Edge.__init__(self, parent_name, child_name)
         self.type = "NtoN"
-        self.relation = "linear"
+        self.relation = "sample"
+        self.bounds = bounds
+        self.category_distribution = category_distribution
+
+    def sample_x(self, x):
+        if self.category_distribution[x][0] == "Gaussian": # NUM
+            return np.random.normal(self.category_distribution[x][1], np.sqrt(self.category_distribution[x][2]))
+        elif self.category_distribution[x][0] == "Uniform": # NUM
+            return np.random.uniform(self.category_distribution[x][1], self.category_distribution[x][2])
+        elif self.category_distribution[x][0] == "Pareto": # NUM
+            return (np.random.pareto(self.category_distribution[x][1]) + 1) * self.category_distribution[x][2]
+        else: # ORD
+            return np.random.randint(self.category_distribution[x][1], self.category_distribution[x][2])
 
     def instantiate_values(self, input_df):
-        if input_df.shape[0] > 0: # use the values of its parent nodes to generate the values
-            return np.array(input_df[self.parent_name])
+        if input_df.shape[0] > 0:
+            input_df[self.child_name] = input_df[self.parent_name].apply(lambda x: self.sample_x(bisect(self.bounds, x)))
+            return np.array(input_df[self.child_name])
         else: # no parent data exits
             print("No parent data exits!")
             raise ValueError
