@@ -174,4 +174,40 @@ edge_essay_admission = NtoC("Essay","Admission",[0.35,0.50,0.65],[{"Y": 0.4, "N"
 edge_con_admission = NtoC("Diversity","Admission",[0.35,0.50,0.65],[{"Y": 0.4, "N": 0.6}, 
                                                                     {"Y": 0.5, "N": 0.5},
                                                                     {"Y": 0.6, "N": 0.4},
-                                                                    {"Y": 0.7, "N": 0.3}])                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                    {"Y": 0.7, "N": 0.3}])
+
+
+
+# Create DAG
+nodes = [node_in_abil, node_sex, node_race, node_income, node_opportunities, node_AQ, node_NAQ, 
+         node_diversity, node_SAT, node_GPA, node_numAPs, node_meanAPs, node_EC, node_letters, 
+         node_essay, node_admission]
+edge_relation = {"Family Income": edge_race_income,
+                 "Opportunities": ([edge_ability_op,edge_sex_op,edge_race_op,edge_income_op],
+                                   [0.18,0.18,0.46,0.18]),
+                 "Academic Qualification": ([edge_ability_AQ,edge_op_AQ],
+                                            [0.5,0.5]),
+                 "Non-Academic Qualification": ([edge_ability_NAQ,edge_op_NAQ],
+                                                [0.5,0.5]),
+                 "Diversity": ([edge_sex_con,edge_race_con,edge_income_con],
+                               [0.33,0.34,0.33]),
+                 "SAT": edge_AQ_SAT,
+                 "GPA": edge_AQ_GPA,
+                 "Number of APs": edge_AQ_numAPs,
+                 "Mean AP Score": edge_AQ_meanAPs,
+                 "Extracurriculars": edge_NAQ_EC,
+                 "Letters of Rec": ([edge_AQ_letters,edge_NAQ_letters],
+                                    [0.5,0.5]),
+                 "Essay": ([edge_AQ_essay,edge_NAQ_essay,edge_con_essay],
+                           [0.335,0.335,0.33]),
+                 "Admission": ([edge_SAT_admission,edge_GPA_admission,edge_numAPs_admission,edge_meanAPs_admission,
+                                edge_EC_admission,edge_letters_admission,edge_essay_admission,edge_con_admission],
+                               [0.1,0.1,0.1,0.1,0.15,0.15,0.15,0.15])}
+
+
+
+# generate data
+mirror = Mirror(seed=0)
+mirror.generate_csv(nodes, edge_relation)
+mirror.save_to_disc("admissionNew.csv", excluded_cols=[])                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
