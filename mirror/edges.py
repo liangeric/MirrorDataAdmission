@@ -53,6 +53,9 @@ class NtoN(Edge):
             finalReturn = np.random.uniform(self.category_distribution[x][1], self.category_distribution[x][2])
         elif self.category_distribution[x][0] == "Pareto": # NUM
             finalReturn = (np.random.pareto(self.category_distribution[x][1]) + 1) * self.category_distribution[x][2]
+        elif self.category_distribution[x][0] == "OrdLocal": # Ord Local
+            bucket = np.random.choice(range(len(self.category_distribution[x][2])-1), p = self.category_distribution[x][2])
+            finalReturn = np.random.randint(self.category_distribution[x][1][bucket],self.category_distribution[x][1][bucket+1])
         else: # ORD
             finalReturn = np.random.randint(self.category_distribution[x][1], self.category_distribution[x][2])
         
@@ -140,7 +143,11 @@ class CtoN(Edge):
         """
         :param parent_name: str, the name of the parent node
         :param child_name: str, the name of the node to be generated
-        :param category_distribution: dict, {"M": ["Gaussian", 0, 1], "F": ["Gaussian", -1, 1]}
+        :param category_distribution: dict, {"M": ["Gaussian", 0, 1, None, None, None], 
+                                             "F": ["Gaussian", -1, 1, None, None, None]}
+                                      Ex: Note that first argument is distribution, second is mean, third is variance
+                                      with the fourth and fifth being bounds, and the sixth how much rounding
+                                      should be done
         """
 
         Edge.__init__(self, parent_name, child_name)
@@ -150,13 +157,27 @@ class CtoN(Edge):
 
     def sample_x(self, x):
         if self.category_distribution[x][0] == "Gaussian": # NUM
-            return np.random.normal(self.category_distribution[x][1], np.sqrt(self.category_distribution[x][2]))
+            finalReturn = np.random.normal(self.category_distribution[x][1], np.sqrt(self.category_distribution[x][2]))
         elif self.category_distribution[x][0] == "Uniform": # NUM
-            return np.random.uniform(self.category_distribution[x][1], self.category_distribution[x][2])
+            finalReturn = np.random.uniform(self.category_distribution[x][1], self.category_distribution[x][2])
         elif self.category_distribution[x][0] == "Pareto": # NUM
-            return (np.random.pareto(self.category_distribution[x][1]) + 1) * self.category_distribution[x][2]
+            finalReturn = (np.random.pareto(self.category_distribution[x][1]) + 1) * self.category_distribution[x][2]
+        elif self.category_distribution[x][0] == "OrdLocal": # Ord Local
+            bucket = np.random.choice(range(len(self.category_distribution[x][2])-1), p = self.category_distribution[x][2])
+            finalReturn = np.random.randint(self.category_distribution[x][1][bucket],self.category_distribution[x][1][bucket+1])
         else: # ORD
-            return np.random.randint(self.category_distribution[x][1], self.category_distribution[x][2])
+            finalReturn = np.random.randint(self.category_distribution[x][1], self.category_distribution[x][2])
+        
+        if self.category_distribution[x][5] != None:
+            finalReturn = np.round(finalReturn,self.category_distribution[x][5])
+        
+        if self.category_distribution[x][3] != None:
+            if finalReturn < self.category_distribution[x][3]:
+                finalReturn = self.category_distribution[x][3]
+        if self.category_distribution[x][4] != None:
+            if finalReturn > self.category_distribution[x][4]:
+                finalReturn = self.category_distribution[x][4]
+        return finalReturn
 
     def instantiate_values(self, input_df):
         """
