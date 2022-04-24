@@ -50,7 +50,8 @@ edge_ability_op = NtoN("Intrinsic Abilities", "Opportunities", [0.35,0.65,0.8],[
                                                                                 ["Gaussian",0.57,0.15**2,0,1,None],
                                                                                 ["Gaussian",0.64,0.15**2,0,1,None]])
 edge_sex_op = CtoN("Sex","Opportunities",{"Male":["Gaussian",0.6,0.15**2,0,1,None],
-                                          "Female":["Gaussian",0.5,0.15**2,0,1,None]})
+                                          "Female":["Gaussian",0.5,0.15**2,0,1,None],
+                                          "Other":["Gaussian",0.5,0.15**2,0,1,None]})
 edge_race_op = CtoN("Race","Opportunities",{"White":["Gaussian",0.5,0.15**2,0,1,None],
                                             "Black":["Gaussian",0.35,0.15**2,0,1,None],
                                             "American Indian":["Gaussian",0.35,0.15**2,0,1,None],
@@ -83,7 +84,8 @@ edge_op_NAQ = NtoN("Opportunities", "Non-Academic Qualification", [0.35,0.65,0.8
                                                                                    ["Gaussian",0.57,0.15**2,0,1,None],
                                                                                    ["Gaussian",0.64,0.15**2,0,1,None]])
 edge_sex_con = CtoN("Sex","Diversity",{"Male":["Gaussian",0.5,0.15**2,0,1,None],
-                                       "Female":["Gaussian",0.35,0.15**2,0,1,None]})
+                                       "Female":["Gaussian",0.35,0.15**2,0,1,None],
+                                       "Other":["Gaussian",0.35,0.15**2,0,1,None]})
 edge_race_con = CtoN("Race","Diversity",{"White":["Gaussian",0.35,0.15**2,0,1,None],
                                          "Black":["Gaussian",0.5,0.15**2,0,1,None],
                                          "American Indian":["Gaussian",0.5,0.15**2,0,1,None],
@@ -99,22 +101,22 @@ edge_income_con = NtoN("Income", "Diversity", [25000,50000,75000,100000,150000,2
                                                                                         ["Gaussian",0.70,0.01**2,0,1,None]])
 
 
-edge_AQ_SAT = NtoN("Academic Qualification", "SAT", [0.35,0.65,0.8],[["Gaussian",925,250**2,0,1,None],
-                                                                     ["Gaussian",1050,250**2,0,1,None],
-                                                                     ["Gaussian",1175,250**2,0,1,None],
-                                                                     ["Gaussian",1300,250**2,0,1,None]])
-edge_AQ_GPA = NtoN("Academic Qualification", "GPA", [0.35,0.65,0.8],[["Gaussian",2.75,0.5**2,0,1,None],
-                                                                     ["Gaussian",3.00,0.5**2,0,1,None],
-                                                                     ["Gaussian",3.25,0.5**2,0,1,None],
-                                                                     ["Gaussian",3.50,0.5**2,0,1,None]])  
-edge_AQ_numAPs = NtoN("Academic Qualification", "Number of APs", [0.35,0.65,0.8],[["Gaussian",3,1**2,0,1,None],
-                                                                               ["Gaussian",4,1**2,0,1,None],
-                                                                               ["Gaussian",5,1**2,0,1,None],
-                                                                               ["Gaussian",6,1**2,0,1,None]]) 
-edge_AQ_meanAPs = NtoN("Academic Qualification", "Mean AP Score", [0.35,0.65,0.8],[["Gaussian",2.75,0.5**2,0,1,None],
-                                                                                   ["Gaussian",3.00,0.5**2,0,1,None],
-                                                                                   ["Gaussian",3.25,0.5**2,0,1,None],
-                                                                                   ["Gaussian",3.50,0.5**2,0,1,None]]) 
+edge_AQ_SAT = NtoN("Academic Qualification", "SAT", [0.35,0.65,0.8],[["Gaussian",925,250**2,400,1600,0],
+                                                                     ["Gaussian",1050,250**2,400,1600,0],
+                                                                     ["Gaussian",1175,250**2,400,1600,0],
+                                                                     ["Gaussian",1300,250**2,400,1600,0]])
+edge_AQ_GPA = NtoN("Academic Qualification", "GPA", [0.35,0.65,0.8],[["Gaussian",2.75,0.5**2,0,4,2],
+                                                                     ["Gaussian",3.00,0.5**2,0,4,2],
+                                                                     ["Gaussian",3.25,0.5**2,0,4,2],
+                                                                     ["Gaussian",3.50,0.5**2,0,4,2]])  
+edge_AQ_numAPs = NtoN("Academic Qualification", "Number of APs", [0.35,0.65,0.8],[["Gaussian",3,1**2,0,8,0],
+                                                                                  ["Gaussian",4,1**2,0,8,0],
+                                                                                  ["Gaussian",5,1**2,0,8,0],
+                                                                                  ["Gaussian",6,1**2,0,8,0]]) 
+edge_AQ_meanAPs = NtoN("Academic Qualification", "Mean AP Score", [0.35,0.65,0.8],[["Gaussian",2.75,0.5**2,0,5,1],
+                                                                                   ["Gaussian",3.00,0.5**2,0,5,1],
+                                                                                   ["Gaussian",3.25,0.5**2,0,5,1],
+                                                                                   ["Gaussian",3.50,0.5**2,0,5,1]]) 
 
 
 edge_AQ_letters = NtoN("Academic Qualification", "Letters of Rec", [0.35,0.65,0.8],[["Gaussian",0.43,0.15**2,0,1,None],
@@ -147,38 +149,38 @@ edge_con_essay = NtoN("Diversity", "Essay", [0.35,0.65,0.8],[["Gaussian",0.43,0.
                                                              ["Gaussian",0.64,0.15**2,0,1,None]])   
 
 
-edge_SAT_admission = NtoC("SAT","Admission",[800,1050,1300],[{"Y": 0.4, "N": 0.6}, 
-                                                             {"Y": 0.5, "N": 0.5},
-                                                             {"Y": 0.6, "N": 0.4},
-                                                             {"Y": 0.7, "N": 0.3}])
-edge_GPA_admission = NtoC("GPA","Admission",[2.5,3.0,3.5],[{"Y": 0.4, "N": 0.6}, 
-                                                           {"Y": 0.5, "N": 0.5},
-                                                           {"Y": 0.6, "N": 0.4},
-                                                           {"Y": 0.7, "N": 0.3}])
-edge_numAPs_admission = NtoC("Number of APs","Admission",[3,4,5],[{"Y": 0.4, "N": 0.6}, 
-                                                                  {"Y": 0.5, "N": 0.5},
-                                                                  {"Y": 0.6, "N": 0.4},
-                                                                  {"Y": 0.7, "N": 0.3}])
-edge_meanAPs_admission = NtoC("Mean AP Score","Admission",[2.5,3.0,3.5],[{"Y": 0.4, "N": 0.6}, 
-                                                                         {"Y": 0.5, "N": 0.5},
-                                                                         {"Y": 0.6, "N": 0.4},
-                                                                         {"Y": 0.7, "N": 0.3}]) 
-edge_EC_admission = NtoC("Extracurriculars","Admission",[0.35,0.50,0.65],[{"Y": 0.4, "N": 0.6}, 
-                                                                          {"Y": 0.5, "N": 0.5},
-                                                                          {"Y": 0.6, "N": 0.4},
-                                                                          {"Y": 0.7, "N": 0.3}])
-edge_letters_admission = NtoC("Letters of Rec","Admission",[0.35,0.50,0.65],[{"Y": 0.4, "N": 0.6}, 
-                                                                             {"Y": 0.5, "N": 0.5},
-                                                                             {"Y": 0.6, "N": 0.4},
-                                                                             {"Y": 0.7, "N": 0.3}])   
-edge_essay_admission = NtoC("Essay","Admission",[0.35,0.50,0.65],[{"Y": 0.4, "N": 0.6}, 
-                                                                  {"Y": 0.5, "N": 0.5},
-                                                                  {"Y": 0.6, "N": 0.4},
-                                                                  {"Y": 0.7, "N": 0.3}])
-edge_con_admission = NtoC("Diversity","Admission",[0.35,0.50,0.65],[{"Y": 0.4, "N": 0.6}, 
-                                                                    {"Y": 0.5, "N": 0.5},
-                                                                    {"Y": 0.6, "N": 0.4},
-                                                                    {"Y": 0.7, "N": 0.3}])
+edge_SAT_admission = NtoC("SAT","Admission",[800,1050,1300],[{"Yes": 0.4, "No": 0.6}, 
+                                                             {"Yes": 0.5, "No": 0.5},
+                                                             {"Yes": 0.6, "No": 0.4},
+                                                             {"Yes": 0.7, "No": 0.3}])
+edge_GPA_admission = NtoC("GPA","Admission",[2.5,3.0,3.5],[{"Yes": 0.4, "No": 0.6}, 
+                                                           {"Yes": 0.5, "No": 0.5},
+                                                           {"Yes": 0.6, "No": 0.4},
+                                                           {"Yes": 0.7, "No": 0.3}])
+edge_numAPs_admission = NtoC("Number of APs","Admission",[3,4,5],[{"Yes": 0.4, "No": 0.6}, 
+                                                                  {"Yes": 0.5, "No": 0.5},
+                                                                  {"Yes": 0.6, "No": 0.4},
+                                                                  {"Yes": 0.7, "No": 0.3}])
+edge_meanAPs_admission = NtoC("Mean AP Score","Admission",[2.5,3.0,3.5],[{"Yes": 0.4, "No": 0.6}, 
+                                                                         {"Yes": 0.5, "No": 0.5},
+                                                                         {"Yes": 0.6, "No": 0.4},
+                                                                         {"Yes": 0.7, "No": 0.3}]) 
+edge_EC_admission = NtoC("Extracurriculars","Admission",[0.35,0.50,0.65],[{"Yes": 0.4, "No": 0.6}, 
+                                                                          {"Yes": 0.5, "No": 0.5},
+                                                                          {"Yes": 0.6, "No": 0.4},
+                                                                          {"Yes": 0.7, "No": 0.3}])
+edge_letters_admission = NtoC("Letters of Rec","Admission",[0.35,0.50,0.65],[{"Yes": 0.4, "No": 0.6}, 
+                                                                             {"Yes": 0.5, "No": 0.5},
+                                                                             {"Yes": 0.6, "No": 0.4},
+                                                                             {"Yes": 0.7, "No": 0.3}])   
+edge_essay_admission = NtoC("Essay","Admission",[0.35,0.50,0.65],[{"Yes": 0.4, "No": 0.6}, 
+                                                                  {"Yes": 0.5, "No": 0.5},
+                                                                  {"Yes": 0.6, "No": 0.4},
+                                                                  {"Yes": 0.7, "No": 0.3}])
+edge_con_admission = NtoC("Diversity","Admission",[0.35,0.50,0.65],[{"Yes": 0.4, "No": 0.6}, 
+                                                                    {"Yes": 0.5, "No": 0.5},
+                                                                    {"Yes": 0.6, "No": 0.4},
+                                                                    {"Yes": 0.7, "No": 0.3}])
 
 
 
@@ -214,5 +216,7 @@ edge_relation = {"Family Income": edge_race_income,
 # generate data
 mirror = Mirror(seed=0)
 mirror.generate_csv(nodes, edge_relation)
-mirror.save_to_disc("admissionNew.csv", excluded_cols=[])                               
+mirror.save_to_disc("admissionNew.csv", excluded_cols=["group","C_SAT","C_GPA","C_Number of APs",
+                                                       "C_Mean AP Score", "C_Extracurriculars",
+                                                       "C_Letters of Rec","C_Essay","C_Diversity"])                               
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
