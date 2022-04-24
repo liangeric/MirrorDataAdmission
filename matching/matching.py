@@ -1,6 +1,7 @@
 # Load necessary packages
 import numpy as np
 import pandas as pd
+import random
 
 def roundNonCat(dataSource, noncategories):
     newData = dataSource.copy()
@@ -13,8 +14,11 @@ def roundNonCat(dataSource, noncategories):
 def find_match(dataOne,dataTwo):
     matches = []
     for i in range(dataOne.shape[0]):
+        # Shuffle second dataset search order so that if there are ties, ties are broken randomly
+        searchOrder = list(range(dataTwo.shape[0]))
+        random.shuffle(searchOrder)
         # Look for an exact match in second Dataset
-        for j in range(dataTwo.shape[0]):
+        for j in searchOrder:
             if (np.sum(dataOne.iloc[i] == dataTwo.iloc[j]) == dataOne.shape[1]):
                 matches +=[j]
                 break
