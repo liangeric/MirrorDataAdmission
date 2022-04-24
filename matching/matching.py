@@ -2,12 +2,17 @@
 import numpy as np
 import pandas as pd
 import random
+from bisect import bisect
 
 def roundNonCat(dataSource, noncategories):
     newData = dataSource.copy()
-    # given column name and number of decimal places to round to
-    for (col,decimalsRound) in noncategories:
-        newData[col] = np.round(newData[col], decimalsRound)
+    for (col,decimalsRound,buckets) in noncategories:
+        # given column name and number of decimal places to round to
+        if decimalsRound != None:
+            newData[col] = np.round(newData[col], decimalsRound)
+        # given column name and buckets to match to
+        else:
+            newData[col] = newData[col].apply(lambda x: bisect(buckets,x))
     return newData
 
 # Finds matches of the first dataset in the second dataset (according to order in argument)
@@ -34,9 +39,12 @@ if __name__ == '__main__':
 
     # List of row names that are categorical
     categories = ["diversity", "admission"]
-    # List of row names that are non-categorical in the format of (name,decimalsRound)
-    # Note: decimalsRound is how many decimal places to keep
-    noncategories= [("TOEFL",1)]
+    # List of row names that are non-categorical in the format of (name,decimalsRound,buckets)
+    # name: name of column
+    # decimalsRound: how many decimal places to keep or None if using buckets
+    # buckets: Buckets to do rounding, make sure that decimalsRound is None, format of buckets example below:
+    #          E.g. [20, 45, 65] defines 4 buckets: [-, 20), [20, 45), [45, 65), [65, -)
+    noncategories= [("TOEFL",None,[70,80,90,100])]
 
     # round the noncategorical columns
     data1Round = roundNonCat(data1,noncategories)
