@@ -38,7 +38,7 @@ class Mirror():
                 # iterate the incoming edges from its parents
                 if type(edges[node_i.name]) not in [tuple, list]:  # only have one parent node
                     if edges[node_i.name].parent_name not in df.columns:
-                        print("The parent is not exited!")
+                        print("The parent does not exist!")
                         raise ValueError
                     df[node_i.name] = edges[node_i.name].instantiate_values(df)
                     print("One parent", edges[node_i.name], list(df.columns))
@@ -48,14 +48,12 @@ class Mirror():
                     else:
                         parents_i = [x.parent_name for x in edges[node_i.name]]
                     if len(set(parents_i).intersection(df.columns)) != len(parents_i):
-                        print("Some parents are not exited!")
+                        print("Some parents do not exist!")
                         raise ValueError
                     if node_i.type == "CAT": # current node is CAT
                         df["group"] = "" # get all the possible subgroups from all the parents' categories
                         for incoming_edge_i, weight_i in zip(edges[node_i.name][0], edges[node_i.name][1]):
-                            # print("---", node_i.name, incoming_edge_i.parent_name, incoming_edge_i.child_name)
                             if incoming_edge_i.type[0] == "N":  # get the categories of the numerical node
-                                # print("**", incoming_edge_i.bounds, bisect(incoming_edge_i.bounds, 23))
                                 df["C_"+incoming_edge_i.parent_name] = df[incoming_edge_i.parent_name].apply(lambda x: str(bisect(incoming_edge_i.bounds,x)))
                                 df["group"] += df["C_"+incoming_edge_i.parent_name]
                                 df["group"] += ","
@@ -63,6 +61,9 @@ class Mirror():
                                 df["group"] += df[incoming_edge_i.parent_name]
                                 df["group"] += ","
                         # compute the new probability table for the child node considering all possible subgroups
+                        # this utilizes the definition of conditional probability to compute new table values
+                        # for example for P(Y) if there are two incoming edges the below computation is true:
+                        # P(Edge_1)P(Y|Edge_1) + P(Edge_2)P(Y|Edge_2) = P(Y,Edge_1) + P(Y,Edge_2) = P(Y)
                         all_cpt = {}
                         for gi in df["group"].unique():
                             gi_probability = {}
@@ -71,21 +72,16 @@ class Mirror():
                                 for incoming_edge_i, weight_i in zip(edges[node_i.name][0], edges[node_i.name][1]):
                                     gi_idx = edges[node_i.name][0].index(incoming_edge_i)
                                     prob_i += weight_i * incoming_edge_i.probability_table[str.split(gi,",")[gi_idx]][node_value_i]
-                                # for gi_idx, parent_i in enumerate(edges[node_i.name][0]):
-                                #     prob_i *= parent_i.probability_table["".join(gi)[gi_idx]][node_value_i]
                                 gi_probability[node_value_i] = prob_i
-                            # all_cpt["".join(gi)] = {x: gi_probability[x]/sum(gi_probability.values()) for x in gi_probability}
                             all_cpt["".join(gi)] = {x: gi_probability[x] for x in gi_probability}
-                        # print("New CPT", all_cpt, "\n")
                         # sample the value of the child node using above new cpt table
                         df[node_i.name] = df["group"].apply(lambda x: np.random.choice(list(all_cpt[x].keys()), p=list(all_cpt[x].values())))
-                        # print("Child node is CAT", list(df.columns))
                     else: # the child node is NUM or ORD
                         df[node_i.name] = 0
                         for incoming_edge_i, weight_i in zip(edges[node_i.name][0], edges[node_i.name][1]):
                             values_i = incoming_edge_i.instantiate_values(df)
+                            # Take weighted average of numbers
                             df[node_i.name] = df[node_i.name] + weight_i * values_i
-                        # print("Child node is numerical", list(df.columns))
 
             else: # no parents
                 # instantiate using its parameters
@@ -93,8 +89,6 @@ class Mirror():
                 print(node_i.name, "independent", list(df.columns))
             print("----"*10+"\n")
         self.df = df
-        # return self.df
-
 
     def save_to_disc(self, file_name_with_path, excluded_cols=[], shorten_num_cols=True):
         if not os.path.exists(file_name_with_path):
