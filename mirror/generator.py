@@ -82,6 +82,12 @@ class Mirror():
                             values_i = incoming_edge_i.instantiate_values(df)
                             # Take weighted average of numbers
                             df[node_i.name] = df[node_i.name] + weight_i * values_i
+                        # add noise to the weighted mean
+                        mean = 0
+                        sd = np.sqrt(node_i.parameters["var"])
+                        noise = np.random.normal(mean,sd)
+                        df[node_i.name] = df[node_i.name] + noise
+
 
             else: # no parents
                 # instantiate using its parameters
