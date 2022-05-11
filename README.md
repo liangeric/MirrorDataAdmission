@@ -9,6 +9,9 @@ In the main repository, as mentioned previously we generate data from two differ
 
 To generate data, users need to run the command in the following format: "python newGeneration.py".
 
+## Analysis of data
+We have also added code to carry out some basic analysis and breakdown of the generated synthetic data. The jupyter notebook that outputs the analysis can be found under "dataAnalysis.ipynb".
+
 ## Matching data
 We also created code in this repository under matching, where given two data files and specifications, will try to match the data in one file to the other. This does exact matching for categorical columns, and for continuous columns, users can specify buckets where the algorithm will recognize a match as long as the two values fall within the same bucket (please see comments in the file on how to specify these parameters). The outputted matching file is called matched.csv, and shows the matches it found for each row in sample1.csv using sample2.csv (it also shows the index of the match in sample2.csv and the row will be blank if no match is found).
 
