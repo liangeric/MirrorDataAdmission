@@ -188,7 +188,7 @@ edge_con_admission = NtoC("Diversity","Admission",[0.35,0.50,0.65],[{"Yes": 0.4,
 nodes = [node_in_abil, node_sex, node_race, node_income, node_opportunities, node_AQ, node_NAQ, 
          node_diversity, node_SAT, node_GPA, node_numAPs, node_meanAPs, node_EC, node_letters, 
          node_essay, node_admission]
-edge_relation = {"Family Income": edge_race_income,
+edge_relation = {"Income": edge_race_income,
                  "Opportunities": ([edge_ability_op,edge_sex_op,edge_race_op,edge_income_op],
                                    [0.18,0.18,0.46,0.18]),
                  "Academic Qualification": ([edge_ability_AQ,edge_op_AQ],

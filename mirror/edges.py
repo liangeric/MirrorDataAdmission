@@ -54,7 +54,7 @@ class NtoN(Edge):
         elif self.category_distribution[x][0] == "Pareto": # NUM
             finalReturn = (np.random.pareto(self.category_distribution[x][1]) + 1) * self.category_distribution[x][2]
         elif self.category_distribution[x][0] == "OrdLocal": # Ord Local
-            bucket = np.random.choice(range(len(self.category_distribution[x][2])-1), p = self.category_distribution[x][2])
+            bucket = np.random.choice(range(len(self.category_distribution[x][1])-1), p = self.category_distribution[x][2])
             finalReturn = np.random.randint(self.category_distribution[x][1][bucket],self.category_distribution[x][1][bucket+1])
         else: # ORD
             finalReturn = np.random.randint(self.category_distribution[x][1], self.category_distribution[x][2])
@@ -163,7 +163,7 @@ class CtoN(Edge):
         elif self.category_distribution[x][0] == "Pareto": # NUM
             finalReturn = (np.random.pareto(self.category_distribution[x][1]) + 1) * self.category_distribution[x][2]
         elif self.category_distribution[x][0] == "OrdLocal": # Ord Local
-            bucket = np.random.choice(range(len(self.category_distribution[x][2])-1), p = self.category_distribution[x][2])
+            bucket = np.random.choice(range(len(self.category_distribution[x][1])-1), p = self.category_distribution[x][2])
             finalReturn = np.random.randint(self.category_distribution[x][1][bucket],self.category_distribution[x][1][bucket+1])
         else: # ORD
             finalReturn = np.random.randint(self.category_distribution[x][1], self.category_distribution[x][2])
