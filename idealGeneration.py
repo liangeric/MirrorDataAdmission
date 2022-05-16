@@ -64,13 +64,13 @@ edge_race_con = CtoN("Race","Diversity",{"White":["Gaussian",0.35,0.15**2,0,1,No
                                          "Asian":["Gaussian",0.5,0.15**2,0,1,None],
                                          "Pacific Islander":["Gaussian",0.5,0.15**2,0,1,None],
                                          "Other":["Gaussian",0.5,0.15**2,0,1,None]})
-edge_income_con = NtoN("Income", "Diversity", [25000,50000,75000,100000,150000,200000],[["Gaussian",0.60,0.01**2,0,1,None],
-                                                                                        ["Gaussian",0.55,0.01**2,0,1,None],
-                                                                                        ["Gaussian",0.50,0.01**2,0,1,None],
+edge_income_con = NtoN("Income", "Diversity", [25000,50000,75000,100000,150000,200000],[["Gaussian",0.40,0.01**2,0,1,None],
                                                                                         ["Gaussian",0.45,0.01**2,0,1,None],
-                                                                                        ["Gaussian",0.40,0.01**2,0,1,None],
-                                                                                        ["Gaussian",0.35,0.01**2,0,1,None],
-                                                                                        ["Gaussian",0.30,0.01**2,0,1,None]])
+                                                                                        ["Gaussian",0.50,0.01**2,0,1,None],
+                                                                                        ["Gaussian",0.55,0.01**2,0,1,None],
+                                                                                        ["Gaussian",0.60,0.01**2,0,1,None],
+                                                                                        ["Gaussian",0.65,0.01**2,0,1,None],
+                                                                                        ["Gaussian",0.70,0.01**2,0,1,None]])
 
 
 edge_AQ_SAT = NtoN("Academic Qualification", "SAT", [0.35,0.65,0.8],[["Gaussian",925,250**2,400,1600,0],

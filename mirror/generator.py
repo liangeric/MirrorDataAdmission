@@ -79,7 +79,9 @@ class Mirror():
                     else: # the child node is NUM or ORD
                         df[node_i.name] = 0
                         for incoming_edge_i, weight_i in zip(edges[node_i.name][0], edges[node_i.name][1]):
+                            temp = df[node_i.name].copy()
                             values_i = incoming_edge_i.instantiate_values(df)
+                            df[node_i.name] = temp
                             # Take weighted average of numbers
                             df[node_i.name] = df[node_i.name] + weight_i * values_i
                         # add noise to the weighted mean
