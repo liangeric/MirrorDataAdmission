@@ -1,11 +1,11 @@
-import os, pathlib
+import os, pathlib, yaml
+from bisect import bisect
 # comment out for local testing
 from mirror.nodes import *
 from mirror.edges import *
 # comment out for global testing
 #from nodes import *
 #from edges import *
-from bisect import bisect
 
 class Mirror():
     def __init__(self, seed=0):
@@ -15,7 +15,7 @@ class Mirror():
         self.cat_cols = []
         self.num_cols = []
 
-    def generate_csv(self, nodes, edges):
+    def generate_csv(self, nodes, edges, config_path):
         """
         :param nodes: list of Node object. The order represents the order to generate the nodes.
                       E.g. [CategoricalNode("G", [], [], {"M": 0.5, "F": 0.5}, sample_n=100),
@@ -25,6 +25,7 @@ class Mirror():
                       E.g. {"X": ([CtoN("G", "X"), CtoN("R", "X")], [0.5, 0.5])} for NUM and ORD,
                            {"D": [CtoC("G", "D"), NtoC("A", "D")]} for CAT with multiple parents,
                            {"D": CtoC("G", "D")} for CAT with single parent
+        :param config_path: string, represents path to config file for parameters
         :return:
         """
         df = pd.DataFrame()
@@ -77,18 +78,45 @@ class Mirror():
                         # sample the value of the child node using above new cpt table
                         df[node_i.name] = df["group"].apply(lambda x: np.random.choice(list(all_cpt[x].keys()), p=list(all_cpt[x].values())))
                     else: # the child node is NUM or ORD
+                        # Read config file
+                        with open(config_path,'r') as file:
+                            specifications = yaml.safe_load(file)
+
                         df[node_i.name] = 0
-                        for incoming_edge_i, weight_i in zip(edges[node_i.name][0], edges[node_i.name][1]):
-                            temp = df[node_i.name].copy()
-                            values_i = incoming_edge_i.instantiate_values(df)
-                            df[node_i.name] = temp
-                            # Take weighted average of numbers
-                            df[node_i.name] = df[node_i.name] + weight_i * values_i
-                        # add noise to the weighted mean
-                        mean = 0
-                        sd = np.sqrt(node_i.parameters["var"])
-                        noise = np.random.normal(mean,sd)
-                        df[node_i.name] = df[node_i.name] + noise
+                        # check to see if config file has specifications for given node
+                        if node_i.name in specifications.keys():
+                            edge_value_generated  = dict()
+                            for incoming_edge_i, weight_i in zip(edges[node_i.name][0], edges[node_i.name][1]):
+                                temp = df[node_i.name].copy()
+                                values_i = incoming_edge_i.instantiate_values(df)
+                                df[node_i.name] = temp
+                                # Get parent name and calculate new values
+                                parent_name = incoming_edge_i.parent_name
+                                edge_value_generated[parent_name] = values_i
+                                if parent_name in specifications[node_i.name].keys():
+                                    parent_coef = specifications[node_i.name][parent_name]
+                                    df[node_i.name] = df[node_i.name] + parent_coef * values_i
+                            # add interaction term
+                            interactions = specifications[node_i.name]["interaction"]
+                            for interaction in interactions:
+                                firstParent = interaction[0]
+                                secondParent = interaction[1]
+                                interaction_coef = interaction[2]
+                                interaction_values = edge_value_generated[firstParent] * edge_value_generated[secondParent]
+                                df[node_i.name] = df[node_i.name] + interaction_coef * interaction_values
+                        else:
+                            # if there is no specification we do a weighted average with noise
+                            for incoming_edge_i, weight_i in zip(edges[node_i.name][0], edges[node_i.name][1]):
+                                temp = df[node_i.name].copy()
+                                values_i = incoming_edge_i.instantiate_values(df)
+                                df[node_i.name] = temp
+                                # Take weighted average of numbers
+                                df[node_i.name] = df[node_i.name] + weight_i * values_i
+                            # add noise to the weighted mean
+                            mean = 0
+                            sd = np.sqrt(node_i.parameters["var"])
+                            noise = np.random.normal(mean,sd)
+                            df[node_i.name] = df[node_i.name] + noise
 
 
             else: # no parents
@@ -113,11 +141,15 @@ class Mirror():
 
 if __name__ == '__main__':
     # initialize nodes
-    total_n = 100
+    total_n = 2
     node_diversity = CategoricalNode("diversity", 
                                     {"White": 0.1, "B": 0.4, "A":0.2, "H":0.1,
                                     "I":0.05, "O":0.15}, 
                                     sample_n=total_n)
+
+    node_test = GaussianNode("test", miu = 90,var = 10**2, sample_n = total_n)
+
+    node_test2 = GaussianNode("test2", miu = 90,var = 10**2, sample_n = total_n)
 
     node_toefl = GaussianNode("TOEFL", miu=90, var=10**2, sample_n=total_n)
 
@@ -131,13 +163,18 @@ if __name__ == '__main__':
                                                             "O": {"Y": 0.9, "N": 0.1}})
     edge_toefl_admission = NtoC("TOEFL", "admission", [100], [{"Y": 0.6, "N": 0.4}, {"Y": 0.4, "N": 0.6}])
 
+    edge_test_toefl = NtoN("test","TOEFL",[80],[["Gaussian",0,1,None,None,None],["Gaussian",0,1,None,None,None]])
+    edge_test2_toefl = NtoN("test2","TOEFL",[80],[["Gaussian",0,1,None,None,None],["Gaussian",0,1,None,None,None]])
 
-    nodes = [node_diversity,node_toefl,node_admission]
-    edge_relations = {"admission":([edge_diversity_admission,edge_toefl_admission],[0.5,0.5])}
+
+    nodes = [node_test, node_test2, node_diversity,node_toefl,node_admission]
+    edge_relations = {"admission":([edge_diversity_admission,edge_toefl_admission],[0.5,0.5]),
+                      "TOEFL":([edge_test_toefl, edge_test2_toefl],[0.5,0.5])}
 
     mirror = Mirror(seed=0)
-    mirror.generate_csv(nodes, edge_relations)
-    mirror.save_to_disc("../out/synthetic_data/test/sample2.csv")
+    mirror.generate_csv(nodes, edge_relations, "config.yml")
+    print(mirror.df)
+    #mirror.save_to_disc("../out/synthetic_data/test/sample2.csv")
 
 
 
