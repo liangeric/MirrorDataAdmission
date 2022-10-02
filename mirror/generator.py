@@ -119,6 +119,7 @@ class Mirror():
                                 noise = np.random.normal(mean,sd)
                                 df[node_i.name] = df[node_i.name] + noise
                         else:
+                            df[node_i.name] = 0
                             for incoming_edge_i, weight_i in zip(edges[node_i.name][0], edges[node_i.name][1]):
                                 temp = df[node_i.name].copy()
                                 values_i = incoming_edge_i.instantiate_values(df)
