@@ -19,6 +19,9 @@ def roundNonCat(dataSource, noncategories):
 def find_match(dataOne,dataTwo):
     matches = []
     for i in range(dataOne.shape[0]):
+        # print out for progress check
+        if i%100 == 0:
+            print(i)
         # Shuffle second dataset search order so that if there are ties, ties are broken randomly
         searchOrder = list(range(dataTwo.shape[0]))
         random.shuffle(searchOrder)
@@ -34,17 +37,18 @@ def find_match(dataOne,dataTwo):
 
 if __name__ == '__main__':
     # Load in two data files
-    data1 = pd.read_csv("../MirrorDataAdmission/matching/sample1.csv")
-    data2 = pd.read_csv("../MirrorDataAdmission/matching/sample2.csv")
+    data1 = pd.read_csv("../admissionNew.csv")
+    data2 = pd.read_csv("../idealAdmission.csv")
 
     # List of row names that are categorical
-    categories = ["diversity", "admission"]
+    categories = ["Sex", "Race"]
     # List of row names that are non-categorical in the format of (name,decimalsRound,buckets)
     # name: name of column
     # decimalsRound: how many decimal places to keep or None if using buckets
     # buckets: Buckets to do rounding, make sure that decimalsRound is None, format of buckets example below:
     #          E.g. [20, 45, 65] defines 4 buckets: [-, 20), [20, 45), [45, 65), [65, -)
-    noncategories= [("TOEFL",None,[70,80,90,100])]
+    noncategories= [("Intrinsic Abilities",None,[0.2,0.35,0.5,0.65,0.8]),
+                    ("Income",None,[25000,50000,75000,100000,150000,200000])]
 
     # round the noncategorical columns
     data1Round = roundNonCat(data1,noncategories)
@@ -60,4 +64,4 @@ if __name__ == '__main__':
 
     # Generate matched dataset
     matchedData = data2.iloc[matches]
-    matchedData.to_csv("matching/matched.csv")
+    matchedData.to_csv("./matched.csv")
