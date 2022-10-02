@@ -40,9 +40,9 @@ if __name__ == '__main__':
     data1 = pd.read_csv("../admissionNew.csv")
     data2 = pd.read_csv("../idealAdmission.csv")
 
-    # List of row names that are categorical
+    # List of column names that are categorical
     categories = ["Sex", "Race"]
-    # List of row names that are non-categorical in the format of (name,decimalsRound,buckets)
+    # List of column names that are non-categorical in the format of (name,decimalsRound,buckets)
     # name: name of column
     # decimalsRound: how many decimal places to keep or None if using buckets
     # buckets: Buckets to do rounding, make sure that decimalsRound is None, format of buckets example below:
@@ -50,9 +50,17 @@ if __name__ == '__main__':
     noncategories= [("Intrinsic Abilities",None,[0.2,0.35,0.5,0.65,0.8]),
                     ("Income",None,[25000,50000,75000,100000,150000,200000])]
 
+    # get the subdatasets for matching
+    allColumns = []
+    allColumns += categories
+    for col in noncategories:
+        allColumns += [col[0]]
+    subData1 = data1[allColumns]
+    subData2 = data2[allColumns]
+
     # round the noncategorical columns
-    data1Round = roundNonCat(data1,noncategories)
-    data2Round = roundNonCat(data2,noncategories)
+    data1Round = roundNonCat(subData1,noncategories)
+    data2Round = roundNonCat(subData2,noncategories)
     
     # Match the datasets
     matches = find_match(data1Round,data2Round)

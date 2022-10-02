@@ -4,7 +4,7 @@ from mirror.generator import Mirror
 import pandas as pd
 
 # size of the data
-total_n = 500
+total_n = 1000
 
 # initialize nodes
 node_in_abil = GaussianNode("Intrinsic Abilities",total_n,0.5,0.15**2,0,1)
