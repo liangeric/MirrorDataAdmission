@@ -1,4 +1,5 @@
 # Load necessary packages
+from re import search
 import numpy as np
 import pandas as pd
 import random
@@ -26,11 +27,12 @@ def find_match(dataOne,dataTwo):
         searchOrder = list(range(dataTwo.shape[0]))
         random.shuffle(searchOrder)
         # Look for an exact match in second Dataset
-        for j in searchOrder:
+        for idx in range(len(searchOrder)):
+            j = searchOrder[idx]
             if (np.sum(dataOne.iloc[i] == dataTwo.iloc[j]) == dataOne.shape[1]):
                 matches +=[j]
                 break
-            if (j == (dataTwo.shape[0]-1)):
+            if (idx == (len(searchOrder)-1)):
                 matches +=[dataTwo.shape[0]]
     return matches
     
@@ -73,3 +75,6 @@ if __name__ == '__main__':
     # Generate matched dataset
     matchedData = data2.iloc[matches]
     matchedData.to_csv("./matched.csv")
+
+    # Print out matched data shape for verification
+    print(matchedData.shape)
