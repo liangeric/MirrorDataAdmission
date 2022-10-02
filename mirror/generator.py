@@ -15,7 +15,7 @@ class Mirror():
         self.cat_cols = []
         self.num_cols = []
 
-    def generate_csv(self, nodes, edges, config_path):
+    def generate_csv(self, nodes, edges, config_path = None):
         """
         :param nodes: list of Node object. The order represents the order to generate the nodes.
                       E.g. [CategoricalNode("G", [], [], {"M": 0.5, "F": 0.5}, sample_n=100),
@@ -78,34 +78,47 @@ class Mirror():
                         # sample the value of the child node using above new cpt table
                         df[node_i.name] = df["group"].apply(lambda x: np.random.choice(list(all_cpt[x].keys()), p=list(all_cpt[x].values())))
                     else: # the child node is NUM or ORD
-                        # Read config file
-                        with open(config_path,'r') as file:
-                            specifications = yaml.safe_load(file)
+                        if config_path != None:
+                            # Read config file
+                            with open(config_path,'r') as file:
+                                specifications = yaml.safe_load(file)
 
-                        df[node_i.name] = 0
-                        # check to see if config file has specifications for given node
-                        if node_i.name in specifications.keys():
-                            edge_value_generated  = dict()
-                            for incoming_edge_i, weight_i in zip(edges[node_i.name][0], edges[node_i.name][1]):
-                                temp = df[node_i.name].copy()
-                                values_i = incoming_edge_i.instantiate_values(df)
-                                df[node_i.name] = temp
-                                # Get parent name and calculate new values
-                                parent_name = incoming_edge_i.parent_name
-                                edge_value_generated[parent_name] = values_i
-                                if parent_name in specifications[node_i.name].keys():
-                                    parent_coef = specifications[node_i.name][parent_name]
-                                    df[node_i.name] = df[node_i.name] + parent_coef * values_i
-                            # add interaction term
-                            interactions = specifications[node_i.name]["interaction"]
-                            for interaction in interactions:
-                                firstParent = interaction[0]
-                                secondParent = interaction[1]
-                                interaction_coef = interaction[2]
-                                interaction_values = edge_value_generated[firstParent] * edge_value_generated[secondParent]
-                                df[node_i.name] = df[node_i.name] + interaction_coef * interaction_values
+                            df[node_i.name] = 0
+                            # check to see if config file has specifications for given node
+                            if node_i.name in specifications.keys():
+                                edge_value_generated  = dict()
+                                for incoming_edge_i, weight_i in zip(edges[node_i.name][0], edges[node_i.name][1]):
+                                    temp = df[node_i.name].copy()
+                                    values_i = incoming_edge_i.instantiate_values(df)
+                                    df[node_i.name] = temp
+                                    # Get parent name and calculate new values
+                                    parent_name = incoming_edge_i.parent_name
+                                    edge_value_generated[parent_name] = values_i
+                                    if parent_name in specifications[node_i.name].keys():
+                                        parent_coef = specifications[node_i.name][parent_name]
+                                        df[node_i.name] = df[node_i.name] + parent_coef * values_i
+                                # add interaction term
+                                interactions = specifications[node_i.name]["interaction"]
+                                for interaction in interactions:
+                                    firstParent = interaction[0]
+                                    secondParent = interaction[1]
+                                    interaction_coef = interaction[2]
+                                    interaction_values = edge_value_generated[firstParent] * edge_value_generated[secondParent]
+                                    df[node_i.name] = df[node_i.name] + interaction_coef * interaction_values
+                            else:
+                                # if there is no specification we do a weighted average with noise
+                                for incoming_edge_i, weight_i in zip(edges[node_i.name][0], edges[node_i.name][1]):
+                                    temp = df[node_i.name].copy()
+                                    values_i = incoming_edge_i.instantiate_values(df)
+                                    df[node_i.name] = temp
+                                    # Take weighted average of numbers
+                                    df[node_i.name] = df[node_i.name] + weight_i * values_i
+                                # add noise to the weighted mean
+                                mean = 0
+                                sd = np.sqrt(node_i.parameters["var"])
+                                noise = np.random.normal(mean,sd)
+                                df[node_i.name] = df[node_i.name] + noise
                         else:
-                            # if there is no specification we do a weighted average with noise
                             for incoming_edge_i, weight_i in zip(edges[node_i.name][0], edges[node_i.name][1]):
                                 temp = df[node_i.name].copy()
                                 values_i = incoming_edge_i.instantiate_values(df)
@@ -117,7 +130,6 @@ class Mirror():
                             sd = np.sqrt(node_i.parameters["var"])
                             noise = np.random.normal(mean,sd)
                             df[node_i.name] = df[node_i.name] + noise
-
 
             else: # no parents
                 # instantiate using its parameters
