@@ -18,7 +18,7 @@ We also created code in this repository under matching, where given two data fil
 To match data, users need to run the command in the following format: "python matching.py".
 
 ## Updated meeting notes
-To stay up to date with planned changes and future edits please see
+To stay up to date with planned changes and future edits please see:
 - [Meeting Notes](https://docs.google.com/document/d/1gIqO-zdUXwWv9Djz0JdHAeOIJZESuOtio8Fz__SdTBo/edit)
 - [Study Plan](https://docs.google.com/document/d/1z1VjZR0KrKefduWshqQ7XVjAJRSqwkd7ZuS4-Z4u-P8/edit#heading=h.3pnk4yfa9o6o)
 - [Independent Study Report](https://docs.google.com/document/d/1PWOGjxaXrFTsOO1crexPhW6XP1BtetXV0wMOzZFug5s/edit)
