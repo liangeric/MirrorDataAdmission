@@ -26,6 +26,20 @@ idealX = idealData.iloc[:,:-1]
 idealY = idealData.iloc[:,-1]
 
 # Encode data into numerical for modeling
+categories = ["Sex", "Race"]
+for category in categories:
+    onehot = pd.get_dummies(realX[category])
+    realX = realX.drop(category,axis = 1)
+    onehot.columns = onehot.columns.values + "_" + category
+    realX = realX.join(onehot)
+    onehot = pd.get_dummies(idealX[category])
+    idealX = idealX.drop(category,axis = 1)
+    onehot.columns = onehot.columns.values + "_" + category
+    idealX = idealX.join(onehot)
+realY = realY.astype("category")
+realY = realY.cat.codes
+idealY = idealY.astype("category")
+idealY = idealY.cat.codes
 
 # Train logistic regression
 
