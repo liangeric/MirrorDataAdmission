@@ -157,6 +157,28 @@ def metric_report(train_data, predicted_labels):
         selection = round(get_selectionRate(sub_predictions),4)
         metrics += [selection]
         print("  Selection Rate=" + str(selection))
+    # Metric for specific groups
+    print("White, Male, Income 200000 to 300000:")
+    filter = (train_data["Income"] >= 200000) & (train_data["Income"] < 300000) & (train_data["White_Race"] == 1) & (train_data["Male_Sex"] == 1)
+    subideal = idealY[filter]
+    sub_predictions = predicted_labels[filter]
+    precision = round(get_precision(subideal,sub_predictions),4)
+    metrics += [precision]
+    print("  Precision=" + str(precision))
+    recall = round(get_recall(subideal,sub_predictions),4)
+    metrics += [recall]
+    print("  Recall=" + str(recall))
+    auc = round(get_auc(subideal,sub_predictions),4)
+    metrics += [auc]
+    print("  AUC=" + str(auc))
+    fpr,fnr = get_FPR_FNR(subideal,sub_predictions)
+    metrics += [round(fpr,4)]
+    metrics += [round(fnr,4)]
+    print("  FPR=" + str(round(fpr,4)))
+    print("  FNR=" + str(round(fnr,4)))
+    selection = round(get_selectionRate(sub_predictions),4)
+    metrics += [selection]
+    print("  Selection Rate=" + str(selection))
 
     return metrics
 
@@ -168,7 +190,7 @@ def get_disparity(experiment,comparison):
         subExperiment = experiment[i*6:i*6+6]
         disparities += list(np.round(np.array(subExperiment)/np.array(comparison),4))
 
-    # print out disparities
+    # print out disparities for Race
     race_column_names = category_names["Race"]
     for idx in range(len(race_column_names)):
         col = race_column_names[idx]
@@ -179,7 +201,7 @@ def get_disparity(experiment,comparison):
         print("  FPR Disparity=" + str(disparities[3+6*idx]))
         print("  FNR Disparity=" + str(disparities[4+6*idx]))
         print("  Selection Rate Disparity=" + str(disparities[5+6*idx]))
-    # Metrics for Sex
+    # print our disparities for Sex
     sex_column_names = category_names["Sex"]
     for idx in range(len(sex_column_names)):
         col = sex_column_names[idx]
@@ -202,6 +224,14 @@ def get_disparity(experiment,comparison):
         print("  FPR Disparity=" + str(disparities[57+6*idx]))
         print("  FNR Disparity=" + str(disparities[58+6*idx]))
         print("  Selection Rate Disparity=" + str(disparities[59+6*idx]))
+    # print out disparities for specific groups
+    print("White, Male, Income 200000 to 300000:")
+    print("  Precision Disparity=" + str(disparities[96]))
+    print("  Recall Disparity=" + str(disparities[97]))
+    print("  AUC Disparity=" + str(disparities[98]))
+    print("  FPR Disparity=" + str(disparities[99]))
+    print("  FNR Disparity=" + str(disparities[100]))
+    print("  Selection Rate Disparity=" + str(disparities[101]))
         
 
 experiment_a = metric_report(idealX,ideal_predictions)
