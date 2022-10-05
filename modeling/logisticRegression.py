@@ -92,10 +92,10 @@ def metric_report(train_data, predicted_labels):
         sub_predictions = predicted_labels[train_data[col] == 1]
         print("  Precision=" + str(round(get_precision(subideal,sub_predictions),4)))
         print("  Recall=" + str(round(get_recall(subideal,sub_predictions),4)))
+        print("  AUC=" + str(round(get_auc(subideal,sub_predictions),4)))
         fpr,fnr = get_FPR_FNR(subideal,sub_predictions)
         print("  FPR=" + str(round(fpr,4)))
         print("  FNR=" + str(round(fnr,4)))
-        print("  AUC=" + str(round(get_auc(subideal,sub_predictions),4)))
         print("  Selection Rate=" + str(round(get_selectionRate(sub_predictions),4)))
     # Metrics for Sex
     sex_column_names = category_names["Sex"]
@@ -105,10 +105,10 @@ def metric_report(train_data, predicted_labels):
         sub_predictions = predicted_labels[train_data[col] == 1]
         print("  Precision=" + str(round(get_precision(subideal,sub_predictions),4)))
         print("  Recall=" + str(round(get_recall(subideal,sub_predictions),4)))
+        print("  AUC=" + str(round(get_auc(subideal,sub_predictions),4)))
         fpr,fnr = get_FPR_FNR(subideal,sub_predictions)
         print("  FPR=" + str(round(fpr,4)))
         print("  FNR=" + str(round(fnr,4)))
-        print("  AUC=" + str(round(get_auc(subideal,sub_predictions),4)))
         print("  Selection Rate=" + str(round(get_selectionRate(sub_predictions),4)))
     # Metrics for Income
     income_categories = [0, 25000, 50000, 75000, 100000, 150000, 200000, 300000]
@@ -120,10 +120,10 @@ def metric_report(train_data, predicted_labels):
         sub_predictions = predicted_labels[(train_data["Income"] >= low_inclusive) & (train_data["Income"] < high_exclusive)]
         print("  Precision=" + str(round(get_precision(subideal,sub_predictions),4)))
         print("  Recall=" + str(round(get_recall(subideal,sub_predictions),4)))
+        print("  AUC=" + str(round(get_auc(subideal,sub_predictions),4)))
         fpr,fnr = get_FPR_FNR(subideal,sub_predictions)
         print("  FPR=" + str(round(fpr,4)))
         print("  FNR=" + str(round(fnr,4)))
-        print("  AUC=" + str(round(get_auc(subideal,sub_predictions),4)))
         print("  Selection Rate=" + str(round(get_selectionRate(sub_predictions),4)))
         
 
