@@ -2,6 +2,7 @@
 from os import SEEK_END
 import numpy as np
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
 from sklearn.metrics import precision_score
@@ -34,18 +35,26 @@ realY = realData.iloc[:,-1]
 idealX = idealData.iloc[:,:-1]
 idealY = idealData.iloc[:,-1]
 
-# Encode data into numerical for modeling
+# Normalize non categorical data
 category_names = dict()
 categories = ["Sex", "Race"]
+realXcategorical = realX[categories]
+idealXcategorical = idealX[categories]
+realX = realX.drop(categories,axis = 1)
+idealX = idealX.drop(categories,axis=1)
+realXStd = realX.apply(lambda x: (x - x.mean())/np.std(x),axis = 0)
+idealXStd = idealX.apply(lambda x: (x - x.mean())/np.std(x),axis = 0)
+
+# Encode categorical data into one hot
 for category in categories:
-    onehot = pd.get_dummies(realX[category])
-    realX = realX.drop(category,axis = 1)
+    onehot = pd.get_dummies(realXcategorical[category])
     onehot.columns = onehot.columns.values + "_" + category
     realX = realX.join(onehot)
-    onehot = pd.get_dummies(idealX[category])
-    idealX = idealX.drop(category,axis = 1)
+    realXStd = realXStd.join(onehot)
+    onehot = pd.get_dummies(idealXcategorical[category])
     onehot.columns = onehot.columns.values + "_" + category
     idealX = idealX.join(onehot)
+    idealXStd = idealXStd.join(onehot)
     # Store category names for future use
     category_names[category] = onehot.columns.values
 # Encode label into categorical where Yes is 1 and No is 0
@@ -55,12 +64,38 @@ idealY = idealY.astype("category")
 idealY = idealY.cat.codes
 
 # Train logistic regression
-log_reg_ideal = LogisticRegression(random_state=seed).fit(idealX,idealY)
-log_reg_real = LogisticRegression(random_state=seed).fit(realX,realY)
+log_reg_ideal = LogisticRegression(random_state=seed).fit(idealXStd,idealY)
+log_reg_real = LogisticRegression(random_state=seed).fit(realXStd,realY)
 
-# Get logistic regression predictions
-ideal_predictions = log_reg_ideal.predict(idealX)
-real_predictions = log_reg_real.predict(realX)
+# Get coefficients
+def get_coefficients():
+    col_names = idealX.columns.values
+    print("Model (a):")
+    model_coefs = zip(col_names,log_reg_ideal.coef_[0])
+    for name,coef in model_coefs:
+        print("  "+name+": "+str(coef))
+    print("Model (b):")
+    model_coefs = zip(col_names,log_reg_real.coef_[0])
+    for name,coef in model_coefs:
+        print("  "+name+": "+str(coef))
+
+#print(realData.groupby(["Admission"])["Academic Qualification"].mean())
+#print(idealData.groupby(["Admission"])["Academic Qualification"].mean())
+
+# Get logistic regression prediction probabilities
+ideal_prediction_probs = pd.DataFrame(log_reg_ideal.predict_proba(idealXStd))
+real_prediction_probs = pd.DataFrame(log_reg_real.predict_proba(realXStd))
+
+# Get predictions based on threshold
+threshold_list = [0.5,0.7]
+ideal_predictions_list = []
+real_predictions_list = []
+for threshold in threshold_list:
+    ideal_predictions_list += [(ideal_prediction_probs.applymap(lambda x: 1 if x>threshold else 0)).iloc[:,1]]
+    real_predictions_list += [(real_prediction_probs.applymap(lambda x: 1 if x>threshold else 0)).iloc[:,1]]
+
+ideal_predictions = np.array(ideal_predictions_list[0])
+real_predictions = np.array(real_predictions_list[0])
 
 # Get metric helper functions
 def get_precision(true,predicted):
@@ -233,10 +268,11 @@ def get_disparity(experiment,comparison):
     print("  FNR Disparity=" + str(disparities[100]))
     print("  Selection Rate Disparity=" + str(disparities[101]))
         
-
+#get_coefficients()
+print("------------------------------")
 experiment_a = metric_report(idealX,ideal_predictions)
 print("------------------------------")
 experiment_b = metric_report(realX,real_predictions)
 print("------------------------------")
 comparisonGroup = [0.6721,0.8542,0.5634,0.7273,0.1458,0.8079]
-get_disparity(experiment_b,comparisonGroup)
+#get_disparity(experiment_b,comparisonGroup)
