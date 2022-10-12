@@ -79,9 +79,6 @@ def get_coefficients():
     for name,coef in model_coefs:
         print("  "+name+": "+str(coef))
 
-#print(realData.groupby(["Admission"])["Academic Qualification"].mean())
-#print(idealData.groupby(["Admission"])["Academic Qualification"].mean())
-
 # Get logistic regression prediction probabilities
 ideal_prediction_probs = pd.DataFrame(log_reg_ideal.predict_proba(idealXStd))
 real_prediction_probs = pd.DataFrame(log_reg_real.predict_proba(realXStd))
@@ -270,9 +267,9 @@ def get_disparity(experiment,comparison):
         
 #get_coefficients()
 print("------------------------------")
-experiment_a = metric_report(idealX,ideal_predictions)
+#experiment_a = metric_report(idealX,ideal_predictions)
 print("------------------------------")
-experiment_b = metric_report(realX,real_predictions)
+#experiment_b = metric_report(realX,real_predictions)
 print("------------------------------")
 comparisonGroup = [0.6721,0.8542,0.5634,0.7273,0.1458,0.8079]
 #get_disparity(experiment_b,comparisonGroup)

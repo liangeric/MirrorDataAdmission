@@ -7,7 +7,7 @@ import pandas as pd
 total_n = 1000
 
 # initialize nodes
-node_in_abil = GaussianNode("Intrinsic Abilities",total_n,0.5,0.15**2,0,1)
+node_in_abil = GaussianNode("Intrinsic Abilities",total_n,0.5,0.5**2,0,1)
 node_sex = CategoricalNode("Sex", {"Male": 0.335, "Female": 0.335, "Other":0.33}, total_n)
 node_race = CategoricalNode("Race", 
                             {"White": 0.17,
@@ -22,8 +22,8 @@ node_income = OrdinalLocalNode("Income",
                                 "probability": [0.18, 0.2, 0.165,0.125,0.15,0.08,0.1]},
                                total_n)
 
-node_opportunities = GaussianNode("Opportunities",total_n,0.5,0.15**2,0,1)
-node_AQ = GaussianNode("Academic Qualification",total_n,0.5,0.15**2,0,1)
+node_opportunities = GaussianNode("Opportunities",total_n,0.5,0.5**2,0,1)
+node_AQ = GaussianNode("Academic Qualification",total_n,0.5,0.3**2,0,1)
 node_NAQ = GaussianNode("Non-Academic Qualification",total_n,0.5,0.15**2,0,1)
 node_diversity = GaussianNode("Diversity",total_n,0.5,0.15**2,0,1)
 
@@ -39,18 +39,18 @@ node_essay = GaussianNode("Essay",total_n,0.5,0.15**2,0,1)
 node_admission = CategoricalNode("Admission", {"Yes": 0.5, "No": 0.5}, sample_n=total_n)
 
 # initialize edges
-edge_ability_AQ = NtoN("Intrinsic Abilities", "Academic Qualification", [0.35,0.65,0.8],[["Gaussian",0.43,0.15**2,0,1,None],
-                                                                                         ["Gaussian",0.50,0.15**2,0,1,None],
-                                                                                         ["Gaussian",0.57,0.15**2,0,1,None],
-                                                                                         ["Gaussian",0.64,0.15**2,0,1,None]])
+edge_ability_AQ = NtoN("Intrinsic Abilities", "Academic Qualification", [0.35,0.5,0.65],[["Gaussian",0.43,0.05**2,0,1,None],
+                                                                                         ["Gaussian",0.50,0.05**2,0,1,None],
+                                                                                         ["Gaussian",0.57,0.05**2,0,1,None],
+                                                                                         ["Gaussian",0.64,0.05**2,0,1,None]])
 edge_ability_NAQ = NtoN("Intrinsic Abilities", "Non-Academic Qualification", [0.35,0.65,0.8],[["Gaussian",0.43,0.15**2,0,1,None],
                                                                                               ["Gaussian",0.50,0.15**2,0,1,None],
                                                                                               ["Gaussian",0.57,0.15**2,0,1,None],
                                                                                               ["Gaussian",0.64,0.15**2,0,1,None]])
-edge_op_AQ = NtoN("Opportunities", "Academic Qualification", [0.35,0.65,0.8],[["Gaussian",0.43,0.15**2,0,1,None],
-                                                                              ["Gaussian",0.50,0.15**2,0,1,None],
-                                                                              ["Gaussian",0.57,0.15**2,0,1,None],
-                                                                              ["Gaussian",0.64,0.15**2,0,1,None]])
+edge_op_AQ = NtoN("Opportunities", "Academic Qualification", [0.35,0.5,0.65],[["Gaussian",0.43,0.05**2,0,1,None],
+                                                                              ["Gaussian",0.50,0.05**2,0,1,None],
+                                                                              ["Gaussian",0.57,0.05**2,0,1,None],
+                                                                              ["Gaussian",0.64,0.05**2,0,1,None]])
 edge_op_NAQ = NtoN("Opportunities", "Non-Academic Qualification", [0.35,0.65,0.8],[["Gaussian",0.43,0.15**2,0,1,None],
                                                                                    ["Gaussian",0.50,0.15**2,0,1,None],
                                                                                    ["Gaussian",0.57,0.15**2,0,1,None],

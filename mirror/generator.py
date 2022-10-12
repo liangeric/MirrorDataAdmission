@@ -116,7 +116,7 @@ class Mirror():
                                 # add noise to the weighted mean
                                 mean = 0
                                 sd = np.sqrt(node_i.parameters["var"])
-                                noise = np.random.normal(mean,sd)
+                                noise = np.random.normal(mean,sd,len(df[node_i.name]))
                                 df[node_i.name] = df[node_i.name] + noise
                         else:
                             df[node_i.name] = 0
@@ -129,7 +129,7 @@ class Mirror():
                             # add noise to the weighted mean
                             mean = 0
                             sd = np.sqrt(node_i.parameters["var"])
-                            noise = np.random.normal(mean,sd)
+                            noise = np.random.normal(mean,sd,len(df[node_i.name]))
                             df[node_i.name] = df[node_i.name] + noise
 
             else: # no parents
