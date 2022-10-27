@@ -34,7 +34,7 @@ idealData = matchedData2.drop(["Unnamed: 0"], axis = 1)
 
 # List of columns to drop that we don't want to include in model
 drop_list = ["Opportunities","Academic Qualification","Non-Academic Qualification",
-             "Diversity"]
+             "Diversity", "Intrinsic Abilities"]
 realData = realData.drop(drop_list, axis = 1)
 idealData = idealData.drop(drop_list, axis = 1)
 
@@ -47,6 +47,11 @@ idealY = idealData.iloc[:,-1]
 # Normalize non categorical data
 category_names = dict()
 categories = ["Sex", "Race"]
+temp_categories = []
+for category in categories:
+    if category not in drop_list:
+        temp_categories.append(category)
+categories = temp_categories
 realXcategorical = realX[categories]
 idealXcategorical = idealX[categories]
 realX = realX.drop(categories,axis = 1)
@@ -302,7 +307,7 @@ def get_disparity(experiment,comparison):
     print("  FNR Disparity=" + str(disparities[100]))
     print("  Selection Rate Disparity=" + str(disparities[101]))
         
-#get_coefficients()
+get_coefficients()
 print("------------------------------")
 #experiment_a = metric_report(idealX_valid,ideal_predictions)
 print("------------------------------")

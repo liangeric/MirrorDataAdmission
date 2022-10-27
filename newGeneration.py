@@ -5,6 +5,7 @@ import pandas as pd
 
 # size of the data
 total_n = 1000
+seed = 12
 
 # initialize nodes
 node_in_abil = GaussianNode("Intrinsic Abilities",total_n,0.5,0.15**2,0,1)
@@ -45,19 +46,19 @@ edge_race_income = CtoN("Race","Income",{"White":["OrdLocal",[0, 25000, 50000, 7
                                          "Asian":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0.18, 0.2, 0.165,0.125,0.15,0.08,0.1],None,None,None],
                                          "Pacific Islander":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0.18, 0.2, 0.165,0.125,0.15,0.08,0.1],None,None,None],
                                          "Other":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0.18, 0.2, 0.165,0.125,0.15,0.08,0.1],None,None,None]})
-edge_ability_op = NtoN("Intrinsic Abilities", "Opportunities", [0.35,0.65,0.8],[["Gaussian",0.43,0.15**2,0,1,None],
-                                                                                ["Gaussian",0.50,0.15**2,0,1,None],
-                                                                                ["Gaussian",0.57,0.15**2,0,1,None],
-                                                                                ["Gaussian",0.64,0.15**2,0,1,None]])
-edge_sex_op = CtoN("Sex","Opportunities",{"Male":["Gaussian",0.6,0.15**2,0,1,None],
+edge_ability_op = NtoN("Intrinsic Abilities", "Opportunities", [0.4,0.5,0.6],[["Gaussian",0.43,0.05**2,0,1,None],
+                                                                                ["Gaussian",0.50,0.05**2,0,1,None],
+                                                                                ["Gaussian",0.57,0.05**2,0,1,None],
+                                                                                ["Gaussian",0.64,0.05**2,0,1,None]])
+edge_sex_op = CtoN("Sex","Opportunities",{"Male":["Gaussian",0.35,0.15**2,0,1,None],
                                           "Female":["Gaussian",0.5,0.15**2,0,1,None],
-                                          "Other":["Gaussian",0.5,0.15**2,0,1,None]})
-edge_race_op = CtoN("Race","Opportunities",{"White":["Gaussian",0.35,0.15**2,0,1,None],
-                                            "Black":["Gaussian",0.5,0.15**2,0,1,None],
-                                            "American Indian":["Gaussian",0.5,0.15**2,0,1,None],
+                                          "Other":["Gaussian",0.7,0.15**2,0,1,None]})
+edge_race_op = CtoN("Race","Opportunities",{"White":["Gaussian",0.25,0.15**2,0,1,None],
+                                            "Black":["Gaussian",0.75,0.15**2,0,1,None],
+                                            "American Indian":["Gaussian",0.75,0.15**2,0,1,None],
                                             "Asian":["Gaussian",0.5,0.15**2,0,1,None],
                                             "Pacific Islander":["Gaussian",0.5,0.15**2,0,1,None],
-                                            "Other":["Gaussian",0.5,0.15**2,0,1,None]})
+                                            "Other":["Gaussian",0.75,0.15**2,0,1,None]})
 edge_income_op = NtoN("Income", "Opportunities", [25000,50000,75000,100000,150000,200000],[["Gaussian",0.40,0.01**2,0,1,None],
                                                                                            ["Gaussian",0.45,0.01**2,0,1,None],
                                                                                            ["Gaussian",0.50,0.01**2,0,1,None],
@@ -75,23 +76,23 @@ edge_ability_NAQ = NtoN("Intrinsic Abilities", "Non-Academic Qualification", [0.
                                                                                               ["Gaussian",0.50,0.05**2,0,1,None],
                                                                                               ["Gaussian",0.57,0.05**2,0,1,None],
                                                                                               ["Gaussian",0.64,0.05**2,0,1,None]])
-edge_op_AQ = NtoN("Opportunities", "Academic Qualification", [0.35,0.5,0.65],[["Gaussian",0.43,0.05**2,0,1,None],
+edge_op_AQ = NtoN("Opportunities", "Academic Qualification", [0.4,0.5,0.6],[["Gaussian",0.43,0.05**2,0,1,None],
                                                                               ["Gaussian",0.50,0.05**2,0,1,None],
                                                                               ["Gaussian",0.57,0.05**2,0,1,None],
                                                                               ["Gaussian",0.64,0.05**2,0,1,None]])
-edge_op_NAQ = NtoN("Opportunities", "Non-Academic Qualification", [0.35,0.65,0.8],[["Gaussian",0.43,0.05**2,0,1,None],
+edge_op_NAQ = NtoN("Opportunities", "Non-Academic Qualification", [0.4,0.5,0.6],[["Gaussian",0.43,0.05**2,0,1,None],
                                                                                    ["Gaussian",0.50,0.05**2,0,1,None],
                                                                                    ["Gaussian",0.57,0.05**2,0,1,None],
                                                                                    ["Gaussian",0.64,0.05**2,0,1,None]])
 edge_sex_con = CtoN("Sex","Diversity",{"Male":["Gaussian",0.35,0.15**2,0,1,None],
-                                       "Female":["Gaussian",0.35,0.15**2,0,1,None],
-                                       "Other":["Gaussian",0.5,0.15**2,0,1,None]})
-edge_race_con = CtoN("Race","Diversity",{"White":["Gaussian",0.35,0.15**2,0,1,None],
-                                         "Black":["Gaussian",0.5,0.15**2,0,1,None],
-                                         "American Indian":["Gaussian",0.5,0.15**2,0,1,None],
+                                       "Female":["Gaussian",0.5,0.15**2,0,1,None],
+                                       "Other":["Gaussian",0.7,0.15**2,0,1,None]})
+edge_race_con = CtoN("Race","Diversity",{"White":["Gaussian",0.25,0.15**2,0,1,None],
+                                         "Black":["Gaussian",0.75,0.15**2,0,1,None],
+                                         "American Indian":["Gaussian",0.75,0.15**2,0,1,None],
                                          "Asian":["Gaussian",0.5,0.15**2,0,1,None],
                                          "Pacific Islander":["Gaussian",0.5,0.15**2,0,1,None],
-                                         "Other":["Gaussian",0.5,0.15**2,0,1,None]})
+                                         "Other":["Gaussian",0.75,0.15**2,0,1,None]})
 edge_income_con = NtoN("Income", "Diversity", [25000,50000,75000,100000,150000,200000],[["Gaussian",0.40,0.01**2,0,1,None],
                                                                                         ["Gaussian",0.45,0.01**2,0,1,None],
                                                                                         ["Gaussian",0.50,0.01**2,0,1,None],
@@ -143,10 +144,10 @@ edge_NAQ_essay = NtoN("Non-Academic Qualification", "Essay", [0.3,0.5,0.7],[["Ga
                                                                              ["Gaussian",0.4,0.05**2,0,1,None],
                                                                              ["Gaussian",0.6,0.05**2,0,1,None],
                                                                              ["Gaussian",0.8,0.05**2,0,1,None]])   
-edge_con_essay = NtoN("Diversity", "Essay", [0.35,0.65,0.8],[["Gaussian",0.43,0.15**2,0,1,None],
-                                                             ["Gaussian",0.50,0.15**2,0,1,None],
-                                                             ["Gaussian",0.57,0.15**2,0,1,None],
-                                                             ["Gaussian",0.64,0.15**2,0,1,None]])   
+edge_con_essay = NtoN("Diversity", "Essay", [0.4,0.5,0.6],[["Gaussian",0.2,0.05**2,0,1,None],
+                                                             ["Gaussian",0.4,0.05**2,0,1,None],
+                                                             ["Gaussian",0.6,0.05**2,0,1,None],
+                                                             ["Gaussian",0.8,0.05**2,0,1,None]])    
 
 
 edge_SAT_admission = NtoC("SAT","Admission",[1000,1100,1200],[{"Yes": 0.1, "No": 0.9}, 
@@ -214,7 +215,7 @@ edge_relation = {"Income": edge_race_income,
 
 
 # generate data
-mirror = Mirror(seed=0)
+mirror = Mirror(seed=seed)
 mirror.generate_csv(nodes, edge_relation)
 mirror.save_to_disc("admissionNew.csv", excluded_cols=["group","C_SAT","C_GPA","C_Number of APs",
                                                        "C_Mean AP Score", "C_Extracurriculars",
