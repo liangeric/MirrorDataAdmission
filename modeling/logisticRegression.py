@@ -9,6 +9,7 @@ from sklearn import metrics
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import confusion_matrix
+import statsmodels.api as sm
 
 # set seed
 seed = 12
@@ -107,17 +108,26 @@ idealY_train = idealY.drop(validation_idx, axis = 0)
 log_reg_ideal = LogisticRegression(random_state=seed).fit(idealXStd_train,idealY_train)
 log_reg_real = LogisticRegression(random_state=seed).fit(realXStd_train,realY_train)
 
+# Train logistic regression stats model
+log_reg_ideal_stats = sm.Logit(idealY_train,idealXStd_train).fit()
+log_reg_real_stats = sm.Logit(realY_train,realXStd_train).fit()
+
 # Get coefficients
-def get_coefficients():
-    col_names = idealX.columns.values
-    print("Model (a):")
-    model_coefs = zip(col_names,log_reg_ideal.coef_[0])
-    for name,coef in model_coefs:
-        print("  "+name+": "+str(coef))
-    print("Model (b):")
-    model_coefs = zip(col_names,log_reg_real.coef_[0])
-    for name,coef in model_coefs:
-        print("  "+name+": "+str(coef))
+def get_coefficients(modelType):
+    if modelType == "regular":
+        col_names = idealX.columns.values
+        print("Model (a):")
+        model_coefs = zip(col_names,log_reg_ideal.coef_[0])
+        for name,coef in model_coefs:
+            print("  "+name+": "+str(coef))
+        print("Model (b):")
+        model_coefs = zip(col_names,log_reg_real.coef_[0])
+        for name,coef in model_coefs:
+            print("  "+name+": "+str(coef))
+    else:
+        print(log_reg_ideal_stats.summary())
+        print()
+        print(log_reg_real_stats.summary())
 
 # Get logistic regression prediction probabilities
 ideal_prediction_probs = pd.DataFrame(log_reg_ideal.predict_proba(idealXStd_valid))
@@ -307,7 +317,7 @@ def get_disparity(experiment,comparison):
     print("  FNR Disparity=" + str(disparities[100]))
     print("  Selection Rate Disparity=" + str(disparities[101]))
         
-get_coefficients()
+get_coefficients("statistical")
 print("------------------------------")
 #experiment_a = metric_report(idealX_valid,ideal_predictions)
 print("------------------------------")
