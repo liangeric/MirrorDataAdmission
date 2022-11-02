@@ -4,11 +4,11 @@ from mirror.generator import Mirror
 import pandas as pd
 
 # size of the data
-total_n = 1000
+total_n = 5000
 seed = 12
 
 # initialize nodes
-node_in_abil = GaussianNode("Intrinsic Abilities",total_n,0.5,0.5**2,0,1)
+node_in_abil = GaussianNode("Intrinsic Abilities",total_n,0.5,0.3**2,0,1)
 node_sex = CategoricalNode("Sex", {"Male": 0.335, "Female": 0.335, "Other":0.33}, total_n)
 node_race = CategoricalNode("Race", 
                             {"White": 0.17,
@@ -23,9 +23,9 @@ node_income = OrdinalLocalNode("Income",
                                 "probability": [0.18, 0.2, 0.165,0.125,0.15,0.08,0.1]},
                                total_n)
 
-node_opportunities = GaussianNode("Opportunities",total_n,0.5,0.5**2,0,1)
-node_AQ = GaussianNode("Academic Qualification",total_n,0.5,0.3**2,0,1)
-node_NAQ = GaussianNode("Non-Academic Qualification",total_n,0.5,0.3**2,0,1)
+node_opportunities = GaussianNode("Opportunities",total_n,0.5,0.05**2,0,1)
+node_AQ = GaussianNode("Academic Qualification",total_n,0.5,0.05**2,0,1)
+node_NAQ = GaussianNode("Non-Academic Qualification",total_n,0.5,0.05**2,0,1)
 node_diversity = GaussianNode("Diversity",total_n,0.5,0.15**2,0,1)
 
 # Note SAT scaled down by 10, so scores range from 40 to 160 by 1, which is equivalent to 400 to 1600 by 10

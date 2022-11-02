@@ -77,7 +77,7 @@ class Mirror():
                             all_cpt["".join(gi)] = {x: gi_probability[x] for x in gi_probability}
                         # sample the value of the child node using above new cpt table
                         df[node_i.name] = df["group"].apply(lambda x: np.random.choice(list(all_cpt[x].keys()), p=list(all_cpt[x].values())))
-                    else: # the child node is NUM or ORD
+                    else: # the current node is NUM or ORD
                         if config_path != None:
                             # Read config file
                             with open(config_path,'r') as file:
