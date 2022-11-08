@@ -35,7 +35,8 @@ idealData = matchedData2.drop(["Unnamed: 0"], axis = 1)
 
 # List of columns to drop that we don't want to include in model
 drop_list = ["Opportunities","Academic Qualification","Non-Academic Qualification",
-             "Diversity", "Intrinsic Abilities"]
+             "Diversity", "Intrinsic Abilities", "Sex", "Race", "Income", "SAT", "GPA", "Number of APs",
+             "Mean AP Score", "Extracurriculars", "Letters of Rec"]
 realData = realData.drop(drop_list, axis = 1)
 idealData = idealData.drop(drop_list, axis = 1)
 
@@ -57,8 +58,8 @@ realXcategorical = realX[categories]
 idealXcategorical = idealX[categories]
 realX = realX.drop(categories,axis = 1)
 idealX = idealX.drop(categories,axis=1)
-realXStd = realX.apply(lambda x: (x - x.mean())/np.std(x),axis = 0)
-idealXStd = idealX.apply(lambda x: (x - x.mean())/np.std(x),axis = 0)
+realXStd = realX.apply(lambda x: (x - x.mean())/(np.std(x)+0.000001),axis = 0)
+idealXStd = idealX.apply(lambda x: (x - x.mean())/(np.std(x)+0.000001),axis = 0)
 
 # Encode categorical data into one hot
 for category in categories:
@@ -105,12 +106,12 @@ idealXStd_train = idealXStd.drop(validation_idx,axis = 0)
 idealY_train = idealY.drop(validation_idx, axis = 0)
 
 # Train logistic regression
-log_reg_ideal = LogisticRegression(random_state=seed).fit(idealXStd_train,idealY_train)
-log_reg_real = LogisticRegression(random_state=seed).fit(realXStd_train,realY_train)
+log_reg_ideal = LogisticRegression(random_state=seed, penalty = 'none').fit(idealXStd_train,idealY_train)
+log_reg_real = LogisticRegression(random_state=seed, penalty = 'none').fit(realXStd_train,realY_train)
 
 # Train logistic regression stats model
-log_reg_ideal_stats = sm.Logit(idealY_train,idealXStd_train).fit()
-log_reg_real_stats = sm.Logit(realY_train,realXStd_train).fit()
+#log_reg_ideal_stats = sm.Logit(idealY_train,idealXStd_train).fit()
+#log_reg_real_stats = sm.Logit(realY_train,realXStd_train).fit()
 
 # Get coefficients
 def get_coefficients(modelType):
@@ -317,7 +318,7 @@ def get_disparity(experiment,comparison):
     print("  FNR Disparity=" + str(disparities[100]))
     print("  Selection Rate Disparity=" + str(disparities[101]))
         
-get_coefficients("statistical")
+get_coefficients("regular")
 print("------------------------------")
 #experiment_a = metric_report(idealX_valid,ideal_predictions)
 print("------------------------------")
