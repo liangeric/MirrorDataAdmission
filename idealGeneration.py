@@ -4,7 +4,7 @@ from mirror.generator import Mirror
 import pandas as pd
 
 # size of the data
-total_n = 1000
+total_n = 2000
 seed = 12
 
 # initialize nodes

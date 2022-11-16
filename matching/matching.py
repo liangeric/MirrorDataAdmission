@@ -63,9 +63,16 @@ if __name__ == '__main__':
     # round the noncategorical columns
     data1Round = roundNonCat(subData1,noncategories)
     data2Round = roundNonCat(subData2,noncategories)
+
+    # add index as a column for reference
+    data2Round.reset_index(inplace=True)
     
     # Match the datasets
-    matches = find_match(data1Round,data2Round)
+    data2Round = data2Round.drop_duplicates(subset = allColumns)
+    matches = pd.merge(data1Round,data2Round,how = 'left', on = allColumns)
+    matches = matches['index']
+    matches = matches.fillna(len(matches))
+    #matches = find_match(data1Round,data2Round)
 
     # add a row of NA's for matches not found
     extraRow = data2.iloc[-1]
