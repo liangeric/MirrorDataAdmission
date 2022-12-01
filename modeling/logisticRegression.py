@@ -19,6 +19,8 @@ np.random.seed(seed)
 data1 = pd.read_csv("../admissionNew.csv")
 matchedData2 = pd.read_csv("../matching/matched.csv")
 
+print(sum(data1["Income"] <= 25000))
+
 # Add matching column to know which rows were matched
 data1["matched"] = matchedData2["Unnamed: 0"]
 
@@ -35,8 +37,7 @@ idealData = matchedData2.drop(["Unnamed: 0"], axis = 1)
 
 # List of columns to drop that we don't want to include in model
 drop_list = ["Opportunities","Academic Qualification","Non-Academic Qualification",
-             "Diversity", "Intrinsic Abilities", "Sex", "Race", "Income", "SAT", "GPA", "Number of APs",
-             "Mean AP Score", "Extracurriculars", "Letters of Rec"]
+             "Diversity", "Intrinsic Abilities"]
 realData = realData.drop(drop_list, axis = 1)
 idealData = idealData.drop(drop_list, axis = 1)
 
@@ -318,11 +319,11 @@ def get_disparity(experiment,comparison):
     print("  FNR Disparity=" + str(disparities[100]))
     print("  Selection Rate Disparity=" + str(disparities[101]))
         
-get_coefficients("regular")
+#get_coefficients("regular")
 print("------------------------------")
 #experiment_a = metric_report(idealX_valid,ideal_predictions)
 print("------------------------------")
-#experiment_b = metric_report(realX_valid,real_predictions)
+experiment_b = metric_report(realX_valid,real_predictions)
 print("------------------------------")
 comparisonGroup = [0.6721,0.8542,0.5634,0.7273,0.1458,0.8079]
 #get_disparity(experiment_b,comparisonGroup)

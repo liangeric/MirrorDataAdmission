@@ -4,7 +4,7 @@ from mirror.generator import Mirror
 import pandas as pd
 
 # size of the data
-total_n = 2000
+total_n = 10000
 seed = 12
 
 # initialize nodes
@@ -40,12 +40,12 @@ node_essay = GaussianNode("Essay",total_n,0.5,0**2,0,1)
 node_admission = CategoricalNode("Admission", {"Yes": 0.5, "No": 0.5}, sample_n=total_n)
 
 # initialize edges
-edge_race_income = CtoN("Race","Income",{"White":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0,1,0,0,0,0,0],None,None,None],
-                                         "Black":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0, 0, 0,0,1,0,0],None,None,None],
-                                         "American Indian":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0, 0, 0,0,1,0,0],None,None,None],
-                                         "Asian":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0, 0, 1,0,0,0,0],None,None,None],
-                                         "Pacific Islander":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0, 0, 1,0,0,0,0],None,None,None],
-                                         "Other":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0, 0, 0,0,1,0,0],None,None,None]})
+edge_race_income = CtoN("Race","Income",{"White":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0.05,0.7,0.05,0.05,0.05,0.05,0.05],None,None,None],
+                                         "Black":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0.05, 0.05, 0.05,0.05,0.7,0.05,0.05],None,None,None],
+                                         "American Indian":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0.05, 0.05, 0.05,0.05,0.7,0.05,0.05],None,None,None],
+                                         "Asian":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0.05, 0.05, 0.7,0.05,0.05,0.05,0.05],None,None,None],
+                                         "Pacific Islander":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0.05, 0.05, 0.7,0.05,0.05,0.05,0.05],None,None,None],
+                                         "Other":["OrdLocal",[0, 25000, 50000, 75000, 100000, 150000, 200000, 300000],[0.05, 0.05, 0.05,0.05,0.7,0.05,0.05],None,None,None]})
 edge_ability_op = NtoN("Intrinsic Abilities", "Opportunities", [0.3,0.5,0.7],[["Gaussian",0.2,0**2,0,1,None],
                                                                                 ["Gaussian",0.4,0**2,0,1,None],
                                                                                 ["Gaussian",0.6,0**2,0,1,None],

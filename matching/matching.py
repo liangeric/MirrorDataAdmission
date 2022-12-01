@@ -66,11 +66,15 @@ if __name__ == '__main__':
 
     # add index as a column for reference
     data2Round.reset_index(inplace=True)
+    data2Round = data2Round.rename(columns={"index":"index_2"})
     
     # Match the datasets
-    data2Round = data2Round.drop_duplicates(subset = allColumns)
-    matches = pd.merge(data1Round,data2Round,how = 'left', on = allColumns)
-    matches = matches['index']
+    data1Round.reset_index(inplace=True)
+    matches = pd.merge(data1Round,data2Round,how = 'inner', on = allColumns)
+    matches = matches.sample(frac=1)
+    matches = matches.drop_duplicates(subset = "index")
+    matches = matches.sort_values(by = "index")
+    matches = matches['index_2']
     matches = matches.fillna(len(matches))
     #matches = find_match(data1Round,data2Round)
 
