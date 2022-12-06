@@ -15,7 +15,7 @@ class Mirror():
         self.cat_cols = []
         self.num_cols = []
 
-    def generate_csv(self, nodes, edges, config_path = None):
+    def generate_csv(self, nodes, edges, config_path = None, verbose = False):
         """
         :param nodes: list of Node object. The order represents the order to generate the nodes.
                       E.g. [CategoricalNode("G", [], [], {"M": 0.5, "F": 0.5}, sample_n=100),
@@ -35,21 +35,25 @@ class Mirror():
             else:
                 self.cat_cols.append(node_i.name)
             if node_i.name in edges.keys(): # have parents
-                print(node_i.name, "with parents")
+                if verbose:
+                    print(node_i.name, "with parents")
                 # iterate the incoming edges from its parents
                 if type(edges[node_i.name]) not in [tuple, list]:  # only have one parent node
                     if edges[node_i.name].parent_name not in df.columns:
-                        print("The parent does not exist!")
+                        if verbose:
+                            print("The parent does not exist!")
                         raise ValueError
                     df[node_i.name] = edges[node_i.name].instantiate_values(df)
-                    print("One parent", edges[node_i.name], list(df.columns))
+                    if verbose:
+                        print("One parent", edges[node_i.name], list(df.columns))
                 else:  # have more than one parent node, update the inputs probability table based on its parents
                     if type(edges[node_i.name]) == tuple:
                         parents_i = [x.parent_name for x in edges[node_i.name][0]]
                     else:
                         parents_i = [x.parent_name for x in edges[node_i.name]]
                     if len(set(parents_i).intersection(df.columns)) != len(parents_i):
-                        print("Some parents do not exist!")
+                        if verbose:
+                            print("Some parents do not exist!")
                         raise ValueError
                     if node_i.type == "CAT": # current node is CAT
                         df["group"] = "" # get all the possible subgroups from all the parents' categories
@@ -135,11 +139,13 @@ class Mirror():
             else: # no parents
                 # instantiate using its parameters
                 df[node_i.name] = node_i.instantiate_values()
-                print(node_i.name, "independent", list(df.columns))
-            print("----"*10+"\n")
+                if verbose:
+                    print(node_i.name, "independent", list(df.columns))
+            if verbose:
+                print("----"*10+"\n")
         self.df = df
 
-    def save_to_disc(self, file_name_with_path, excluded_cols=[], shorten_num_cols=True):
+    def save_to_disc(self, file_name_with_path, excluded_cols=[], shorten_num_cols=True, verbose = False):
         if not os.path.exists(file_name_with_path):
             directory = os.path.dirname(file_name_with_path)
             pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
@@ -149,7 +155,8 @@ class Mirror():
             self.df.drop(columns=excluded_cols).to_csv(file_name_with_path, index=False)
         else:
             self.df.to_csv(file_name_with_path, index=False)
-        print('--> Generated data is saved to ', file_name_with_path, '\n')
+        if verbose:
+            print('--> Generated data is saved to ', file_name_with_path, '\n')
 
 
 if __name__ == '__main__':
