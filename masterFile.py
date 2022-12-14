@@ -166,3 +166,4 @@ get_data(50)
 # Get figures based on experiments
 for columnName in tqdm(column_names, leave = False):
     generateFigure(columnName)
+    
